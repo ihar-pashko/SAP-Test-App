@@ -1,8 +1,10 @@
 [versions]
 androidGradle = "8.12.2"
+detektFormatting = "1.23.8"
 koinAndroid = "4.1.1"
 kotlin = "2.2.10"
 ksp = "2.2.10-2.0.2"
+detekt = "1.23.8"
 compileSdk = "36"
 minSdk = "27"
 
@@ -28,6 +30,7 @@ roomTesting = "2.8.3"
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detektFormatting" }
 google-material = { module = "com.google.android.material:material", version.ref = "material" }
 
 # Lifecycle
@@ -63,6 +66,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 [bundles]
 lifecycle = ["lifecycle-runtime", "lifecycle-viewmodel", "lifecycle-livedata"]

@@ -3,7 +3,7 @@ package com.sap.codelab.presentation.view.detail
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.sap.codelab.data.model.Memo
+import com.sap.codelab.data.model.MemoModel
 import com.sap.codelab.databinding.ActivityViewMemoBinding
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -13,7 +13,7 @@ internal const val BUNDLE_MEMO_ID: String = "memoId"
 /**
  * Activity that allows a user to see the details of a memo.
  */
-internal class ViewMemo : AppCompatActivity() {
+internal class ViewMemoActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityViewMemoBinding
     private val model: ViewMemoViewModel by viewModel()
@@ -27,7 +27,7 @@ internal class ViewMemo : AppCompatActivity() {
         if (savedInstanceState == null) {
             // Observe the memo state flow for changes
             lifecycleScope.launch {
-                model.memo.collect { value ->
+                model.memoModel.collect { value ->
                     value?.let { memo ->
                         // Update the UI whenever the memo changes
                         updateUI(memo)
@@ -42,12 +42,12 @@ internal class ViewMemo : AppCompatActivity() {
     /**
      * Updates the UI with the given memo details.
      *
-     * @param memo - the memo whose details are to be displayed.
+     * @param memoModel - the memo whose details are to be displayed.
      */
-    private fun updateUI(memo: Memo) {
+    private fun updateUI(memoModel: MemoModel) {
         binding.contentCreateMemo.run {
-            memoTitle.setText(memo.title)
-            memoDescription.setText(memo.description)
+            memoTitle.setText(memoModel.title)
+            memoDescription.setText(memoModel.description)
             memoTitle.isEnabled = false
             memoDescription.isEnabled = false
         }

@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.sap.codelab.presentation.view.home.Home"
+            android:name="com.sap.codelab.presentation.view.home.HomeActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -20,12 +20,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.sap.codelab.presentation.view.create.CreateMemo"
+            android:name="com.sap.codelab.presentation.view.create.CreateMemoActivity"
             android:exported="false"
             android:label="@string/new_memo"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.sap.codelab.presentation.view.detail.ViewMemo"
+            android:name="com.sap.codelab.presentation.view.detail.ViewMemoActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

@@ -2,7 +2,7 @@ package com.sap.codelab
 
 import android.app.Application
 import com.sap.codelab.di.databaseModule
-import com.sap.codelab.di.repositoryModule
+import com.sap.codelab.di.memoRepositoryImplModule
 import com.sap.codelab.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -18,7 +18,7 @@ internal class App : Application() {
             modules(
                 listOf(
                     databaseModule,
-                    repositoryModule,
+                    memoRepositoryImplModule,
                     viewModelModule
                 )
             )

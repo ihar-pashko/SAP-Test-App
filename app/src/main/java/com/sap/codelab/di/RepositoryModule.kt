@@ -1,9 +1,9 @@
 package com.sap.codelab.di
 
-import com.sap.codelab.domain.IMemoRepository
+import com.sap.codelab.domain.MemoRepository
 import org.koin.dsl.module
-import com.sap.codelab.data.repository.Repository
+import com.sap.codelab.data.repository.MemoRepositoryImpl
 
-val repositoryModule = module {
-    single<IMemoRepository> { Repository(get()) }
+val memoRepositoryImplModule = module {
+    single<MemoRepository> { MemoRepositoryImpl(get()) }
 }

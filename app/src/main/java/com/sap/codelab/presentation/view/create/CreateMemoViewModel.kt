@@ -1,8 +1,8 @@
 package com.sap.codelab.presentation.view.create
 
 import androidx.lifecycle.ViewModel
-import com.sap.codelab.data.model.Memo
-import com.sap.codelab.domain.IMemoRepository
+import com.sap.codelab.data.model.MemoModel
+import com.sap.codelab.domain.MemoRepository
 import com.sap.codelab.utils.coroutines.ScopeProvider
 import com.sap.codelab.utils.extensions.empty
 import kotlinx.coroutines.launch
@@ -10,16 +10,16 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel for matching CreateMemo view. Handles user interactions.
  */
-internal class CreateMemoViewModel(private val repository: IMemoRepository) : ViewModel() {
+internal class CreateMemoViewModel(private val repository: MemoRepository) : ViewModel() {
 
-    private var memo = Memo(0, String.empty(), String.empty(), 0, 0, 0, false)
+    private var memoModel = MemoModel(0, String.empty(), String.empty(), 0, 0, 0, false)
 
     /**
      * Saves the memo in it's current state.
      */
     fun saveMemo() {
         ScopeProvider.application.launch {
-            repository.saveMemo(memo)
+            repository.saveMemo(memoModel)
         }
     }
 
@@ -27,21 +27,21 @@ internal class CreateMemoViewModel(private val repository: IMemoRepository) : Vi
      * Call this method to update the memo. This is usually needed when the user changed his input.
      */
     fun updateMemo(title: String, description: String) {
-        memo = Memo(title = title, description = description, id = 0, reminderDate = 0, reminderLatitude = 0, reminderLongitude = 0, isDone = false)
+        memoModel = MemoModel(title = title, description = description, id = 0, reminderDate = 0, reminderLatitude = 0, reminderLongitude = 0, isDone = false)
     }
 
     /**
      * @return true if the title and content are not blank; false otherwise.
      */
-    fun isMemoValid(): Boolean = memo.title.isNotBlank() && memo.description.isNotBlank()
+    fun isMemoValid(): Boolean = memoModel.title.isNotBlank() && memoModel.description.isNotBlank()
 
     /**
      * @return true if the memo text is blank, false otherwise.
      */
-    fun hasTextError() = memo.description.isBlank()
+    fun hasTextError() = memoModel.description.isBlank()
 
     /**
      * @return true if the memo title is blank, false otherwise.
      */
-    fun hasTitleError() = memo.title.isBlank()
+    fun hasTitleError() = memoModel.title.isBlank()
 }

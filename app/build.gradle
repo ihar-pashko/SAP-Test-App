@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.detekt)
 }
 
 android {
@@ -47,6 +48,15 @@ kotlin {
     }
 }
 
+detekt {
+    toolVersion = "1.23.8"
+    buildUponDefaultConfig = true
+    allRules = false
+    config = files("$rootDir/detekt.yml")
+    source = files("src/main/kotlin", "src/test/kotlin")
+    parallel = true
+}
+
 dependencies {
     implementation(fileTree("libs") { include("*.jar") })
     //AndroidX
@@ -71,6 +81,8 @@ dependencies {
     // Google Maps
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+
+    detektPlugins(libs.detekt.formatting)
 
     // Testing
     testImplementation(libs.test.junit)

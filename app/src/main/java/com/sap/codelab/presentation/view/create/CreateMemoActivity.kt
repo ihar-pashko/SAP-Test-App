@@ -13,7 +13,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 /**
  * Activity that allows a user to create a new Memo.
  */
-internal class CreateMemo : AppCompatActivity() {
+internal class CreateMemoActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateMemoBinding
     private val model: CreateMemoViewModel by viewModel()

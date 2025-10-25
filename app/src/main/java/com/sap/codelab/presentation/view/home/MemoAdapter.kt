@@ -6,15 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import com.sap.codelab.databinding.RecyclerviewMemoBinding
-import com.sap.codelab.data.model.Memo
+import com.sap.codelab.data.model.MemoModel
 import kotlin.math.max
 
 /**
  * Adapter containing a set of memos.
  */
-internal class MemoAdapter(private val items: MutableList<Memo>,
-                           private val onClick: View.OnClickListener,
-                           private val onCheckboxChanged: CompoundButton.OnCheckedChangeListener) : RecyclerView.Adapter<MemoViewHolder>() {
+internal class MemoAdapter(
+    private val items: MutableList<MemoModel>,
+    private val onClick: View.OnClickListener,
+    private val onCheckboxChanged: CompoundButton.OnCheckedChangeListener
+) : RecyclerView.Adapter<MemoViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewTypee: Int): MemoViewHolder {
         return MemoViewHolder(newItemViewBinding(parent))
@@ -30,7 +32,7 @@ internal class MemoAdapter(private val items: MutableList<Memo>,
     /**
      * Updates the current list of items to the given list of items.
      */
-    fun setItems(newItems: List<Memo>) {
+    fun setItems(newItems: List<MemoModel>) {
         val count = itemCount
         items.clear()
         items.addAll(newItems)

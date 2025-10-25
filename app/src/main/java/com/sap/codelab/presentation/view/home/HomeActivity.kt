@@ -10,18 +10,18 @@ import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sap.codelab.R
-import com.sap.codelab.data.model.Memo
+import com.sap.codelab.data.model.MemoModel
 import com.sap.codelab.databinding.ActivityHomeBinding
-import com.sap.codelab.presentation.view.create.CreateMemo
+import com.sap.codelab.presentation.view.create.CreateMemoActivity
 import com.sap.codelab.presentation.view.detail.BUNDLE_MEMO_ID
-import com.sap.codelab.presentation.view.detail.ViewMemo
+import com.sap.codelab.presentation.view.detail.ViewMemoActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * The main activity of the app. Shows a list of recorded memos and lets the user add new memos.
  */
-internal class Home : AppCompatActivity() {
+internal class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private val model: HomeViewModel by viewModel()
@@ -45,7 +45,7 @@ internal class Home : AppCompatActivity() {
 
         binding.fab.setOnClickListener {
             // Handles clicks on the FAB button > creates a new Memo
-            createMemoLauncher.launch(Intent(this@Home, CreateMemo::class.java))
+            createMemoLauncher.launch(Intent(this@HomeActivity, CreateMemoActivity::class.java))
         }
         model.loadOpenMemos()
     }
@@ -56,10 +56,10 @@ internal class Home : AppCompatActivity() {
     private fun initializeAdapter(): MemoAdapter {
         val adapter = MemoAdapter(mutableListOf(), { view ->
             // Implementation for when the user selects a row to show the detail view
-            showMemo((view.tag as Memo).id)
+            showMemo((view.tag as MemoModel).id)
         }, { checkbox, isChecked ->
             // Implementation for when the user marks a memo as completed
-            model.updateMemo(checkbox.tag as Memo, isChecked)
+            model.updateMemo(checkbox.tag as MemoModel, isChecked)
             model.refreshMemos()
         })
         lifecycle.coroutineScope.launch {
@@ -76,7 +76,7 @@ internal class Home : AppCompatActivity() {
      * @param memoId    - the id of the memo to be shown.
      */
     private fun showMemo(memoId: Long) {
-        val intent = Intent(this@Home, ViewMemo::class.java)
+        val intent = Intent(this@HomeActivity, ViewMemoActivity::class.java)
         intent.putExtra(BUNDLE_MEMO_ID, memoId)
         startActivity(intent)
     }
@@ -86,11 +86,11 @@ internal class Home : AppCompatActivity() {
      */
     private fun setupRecyclerView(adapter: MemoAdapter) {
         binding.contentHome.recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@Home, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(this@HomeActivity, LinearLayoutManager.VERTICAL, false)
             this.adapter = adapter
             addItemDecoration(
                 DividerItemDecoration(
-                    this@Home,
+                    this@HomeActivity,
                     (layoutManager as LinearLayoutManager).orientation
                 )
             )

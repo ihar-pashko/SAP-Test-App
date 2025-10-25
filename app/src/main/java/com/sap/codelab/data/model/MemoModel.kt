@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
  * Represents a memo.
  */
 @Entity(tableName = "memo")
-internal data class Memo(
+data class MemoModel(
         @ColumnInfo(name = "id")
         @PrimaryKey(autoGenerate = true)
         var id: Long,

@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.androidx.navigation.safeargs.kotlin)
     alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
 }
@@ -53,16 +54,18 @@ detekt {
     buildUponDefaultConfig = true
     allRules = false
     config = files("$rootDir/detekt.yml")
-    source = files("src/main/kotlin", "src/test/kotlin")
     parallel = true
 }
 
 dependencies {
     implementation(fileTree("libs") { include("*.jar") })
+
     //AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
+    implementation (libs.androidx.navigation.fragment.ktx)
+    implementation (libs.androidx.navigation.ui.ktx)
     implementation(libs.google.material)
 
     //Lifecycle, LiveData and ViewModel dependencies

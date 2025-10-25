@@ -795,3 +795,67 @@ style:
     active: true
     excludeImports:
       - 'java.util.*'
+formatting:
+  active: true
+  AnnotationOnSeparateLine:
+    active: true
+  ChainWrapping:
+    active: true
+  CommentSpacing:
+    active: true
+  Filename:
+    active: true
+  FinalNewline:
+    active: true
+  Indentation:
+    active: true
+  MaximumLineLength:
+    active: false
+  ModifierOrdering:
+    active: true
+  MultiLineIfElse:
+    active: true
+  NoBlankLineBeforeRbrace:
+    active: true
+  NoConsecutiveBlankLines:
+    active: true
+  NoEmptyClassBody:
+    active: true
+  NoLineBreakAfterElse:
+    active: true
+  NoLineBreakBeforeAssignment:
+    active: true
+  NoMultipleSpaces:
+    active: true
+  NoSemicolons:
+    active: true
+  NoTrailingSpaces:
+    active: true
+  NoUnitReturn:
+    active: true
+  NoUnusedImports:
+    active: true
+  NoWildcardImports:
+    active: true
+  ParameterListWrapping:
+    active: true
+  SpacingAroundColon:
+    active: true
+  SpacingAroundComma:
+    active: true
+  SpacingAroundCurly:
+    active: true
+  SpacingAroundDot:
+    active: true
+  SpacingAroundKeyword:
+    active: true
+  SpacingAroundOperators:
+    active: true
+  SpacingAroundParens:
+    active: true
+  SpacingAroundRangeOperator:
+    active: true
+  SpacingAroundUnaryOperator:
+    active: true
+  StringTemplate:
+    active: true

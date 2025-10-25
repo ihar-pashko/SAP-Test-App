@@ -111,7 +111,7 @@ internal class HomeActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_show_all -> {
                 model.loadAllMemos()
-                //Switch available menu options
+                // Switch available menu options
                 menuItemShowAll.isVisible = false
                 menuItemShowOpen.isVisible = true
                 true
@@ -119,7 +119,7 @@ internal class HomeActivity : AppCompatActivity() {
 
             R.id.action_show_open -> {
                 model.loadOpenMemos()
-                //Switch available menu options
+                // Switch available menu options
                 menuItemShowOpen.isVisible = false
                 menuItemShowAll.isVisible = true
                 true

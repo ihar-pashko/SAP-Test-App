@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.sap.codelab.presentation.view.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/activity_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_createMemoFragment"
+            app:destination="@id/createMemoFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_viewMemoFragment"
+            app:destination="@id/viewMemoFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/createMemoFragment"
+        android:name="com.sap.codelab.presentation.view.create.CreateMemoFragment"
+        android:label="Create Memo"
+        tools:layout="@layout/activity_create_memo" />
+
+    <fragment
+        android:id="@+id/viewMemoFragment"
+        android:name="com.sap.codelab.presentation.view.detail.ViewMemoFragment"
+        android:label="View Memo"
+        tools:layout="@layout/activity_view_memo">
+
+        <argument
+            android:name="memoId"
+            app:argType="long" />
+
+    </fragment>
+</navigation>

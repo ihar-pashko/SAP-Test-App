@@ -18,7 +18,6 @@ internal class CreateMemoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateMemoBinding
     private val model: CreateMemoViewModel by viewModel()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCreateMemoBinding.inflate(layoutInflater)

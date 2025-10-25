@@ -1,10 +1,10 @@
 package com.sap.codelab.presentation.view.home
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.CompoundButton
-import com.sap.codelab.databinding.RecyclerviewMemoBinding
+import androidx.recyclerview.widget.RecyclerView
 import com.sap.codelab.data.model.MemoModel
+import com.sap.codelab.databinding.RecyclerviewMemoBinding
 
 /**
  * View holder for Memos.
@@ -25,7 +25,7 @@ internal class MemoViewHolder(private val binding: RecyclerviewMemoBinding) :
             memoText.text = memoModel.description
         }
         updateCheckbox(memoModel, onCheckboxChanged)
-        //This is needed if the user selects a given memo to show the detail screen
+        // This is needed if the user selects a given memo to show the detail screen
         itemView.tag = memoModel
         itemView.setOnClickListener(onClick)
     }

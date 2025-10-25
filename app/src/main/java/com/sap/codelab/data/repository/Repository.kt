@@ -1,9 +1,11 @@
-package com.sap.codelab.repository
+package com.sap.codelab.data.repository
 
 import androidx.room.Room
 import android.content.Context
 import androidx.annotation.WorkerThread
-import com.sap.codelab.model.Memo
+import com.sap.codelab.data.database.Database
+import com.sap.codelab.data.model.Memo
+import com.sap.codelab.domain.IMemoRepository
 
 private const val DATABASE_NAME: String = "codelab"
 

@@ -1,4 +1,4 @@
-package com.sap.codelab.view.home
+package com.sap.codelab.presentation.view.home
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import com.sap.codelab.databinding.RecyclerviewMemoBinding
-import com.sap.codelab.model.Memo
+import com.sap.codelab.data.model.Memo
 import kotlin.math.max
 
 /**

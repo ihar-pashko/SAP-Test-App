@@ -1,4 +1,4 @@
-package com.sap.codelab.view.home
+package com.sap.codelab.presentation.view.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,10 +12,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import com.sap.codelab.R
 import com.sap.codelab.databinding.ActivityHomeBinding
-import com.sap.codelab.model.Memo
-import com.sap.codelab.view.create.CreateMemo
-import com.sap.codelab.view.detail.BUNDLE_MEMO_ID
-import com.sap.codelab.view.detail.ViewMemo
+import com.sap.codelab.data.model.Memo
+import com.sap.codelab.presentation.view.create.CreateMemo
+import com.sap.codelab.presentation.view.detail.BUNDLE_MEMO_ID
+import com.sap.codelab.presentation.view.detail.ViewMemo
 import kotlinx.coroutines.launch
 
 /**

@@ -1,6 +1,6 @@
-package com.sap.codelab.repository
+package com.sap.codelab.domain
 
-import com.sap.codelab.model.Memo
+import com.sap.codelab.data.model.Memo
 
 /**
  * Interface for a repository offering memo related CRUD operations.

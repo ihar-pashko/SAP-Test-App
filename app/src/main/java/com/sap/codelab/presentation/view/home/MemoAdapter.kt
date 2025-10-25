@@ -5,15 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.recyclerview.widget.RecyclerView
-import com.sap.codelab.data.model.MemoModel
 import com.sap.codelab.databinding.RecyclerviewMemoBinding
+import com.sap.codelab.domain.model.Memo
 import kotlin.math.max
 
 /**
  * Adapter containing a set of memos.
  */
 internal class MemoAdapter(
-    private val items: MutableList<MemoModel>,
+    private val items: MutableList<Memo>,
     private val onClick: View.OnClickListener,
     private val onCheckboxChanged: CompoundButton.OnCheckedChangeListener
 ) : RecyclerView.Adapter<MemoViewHolder>() {
@@ -32,7 +32,7 @@ internal class MemoAdapter(
     /**
      * Updates the current list of items to the given list of items.
      */
-    fun setItems(newItems: List<MemoModel>) {
+    fun setItems(newItems: List<Memo>) {
         val count = itemCount
         items.clear()
         items.addAll(newItems)

@@ -3,8 +3,8 @@ package com.sap.codelab.presentation.view.detail
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.sap.codelab.data.model.MemoModel
 import com.sap.codelab.databinding.ActivityViewMemoBinding
+import com.sap.codelab.domain.model.Memo
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -42,12 +42,12 @@ internal class ViewMemoActivity : AppCompatActivity() {
     /**
      * Updates the UI with the given memo details.
      *
-     * @param memoModel - the memo whose details are to be displayed.
+     * @param memo - the memo whose details are to be displayed.
      */
-    private fun updateUI(memoModel: MemoModel) {
+    private fun updateUI(memo: Memo) {
         binding.contentCreateMemo.run {
-            memoTitle.setText(memoModel.title)
-            memoDescription.setText(memoModel.description)
+            memoTitle.setText(memo.title)
+            memoDescription.setText(memo.description)
             memoTitle.isEnabled = false
             memoDescription.isEnabled = false
         }

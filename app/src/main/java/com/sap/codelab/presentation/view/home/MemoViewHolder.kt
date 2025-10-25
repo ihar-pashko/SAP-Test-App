@@ -3,8 +3,8 @@ package com.sap.codelab.presentation.view.home
 import android.view.View
 import android.widget.CompoundButton
 import androidx.recyclerview.widget.RecyclerView
-import com.sap.codelab.data.model.MemoModel
 import com.sap.codelab.databinding.RecyclerviewMemoBinding
+import com.sap.codelab.domain.model.Memo
 
 /**
  * View holder for Memos.
@@ -16,17 +16,17 @@ internal class MemoViewHolder(private val binding: RecyclerviewMemoBinding) :
      * Updates the memo view with the given memo.
      */
     fun update(
-        memoModel: MemoModel,
+        memo: Memo,
         onClick: View.OnClickListener,
         onCheckboxChanged: CompoundButton.OnCheckedChangeListener
     ) {
         binding.run {
-            memoTitle.text = memoModel.title
-            memoText.text = memoModel.description
+            memoTitle.text = memo.title
+            memoText.text = memo.description
         }
-        updateCheckbox(memoModel, onCheckboxChanged)
+        updateCheckbox(memo, onCheckboxChanged)
         // This is needed if the user selects a given memo to show the detail screen
-        itemView.tag = memoModel
+        itemView.tag = memo
         itemView.setOnClickListener(onClick)
     }
 
@@ -34,18 +34,18 @@ internal class MemoViewHolder(private val binding: RecyclerviewMemoBinding) :
      * Updates the checkbox view.
      */
     private fun updateCheckbox(
-        memoModel: MemoModel,
+        memo: Memo,
         onCheckboxChanged: CompoundButton.OnCheckedChangeListener
     ) {
         // if the view is reused it will already have a listener already set on it. So in order this not to be called when the value is initialized
         // we remove the listener and set it back.
         binding.checkBox.apply {
             setOnCheckedChangeListener(null)
-            isChecked = memoModel.isDone
+            isChecked = memo.isDone
             // We only let the user edit the checkbox if the item has not been marked as "done"
-            isEnabled = !memoModel.isDone
+            isEnabled = !memo.isDone
             // We need the memo if the user ticks the checkbox, so we can update the memo
-            tag = memoModel
+            tag = memo
             setOnCheckedChangeListener(onCheckboxChanged)
         }
     }

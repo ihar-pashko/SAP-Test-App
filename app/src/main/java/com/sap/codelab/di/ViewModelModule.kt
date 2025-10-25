@@ -7,7 +7,20 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
-    viewModel { HomeViewModel(get()) }
-    viewModel { ViewMemoViewModel(get()) }
-    viewModel { CreateMemoViewModel(get()) }
+    viewModel {
+        HomeViewModel(
+            getAllMemos = get(),
+            getOpenMemos = get(),
+            updateMemoDoneStatus = get()
+        )
+    }
+
+    viewModel { ViewMemoViewModel(getMemoById = get()) }
+
+    viewModel {
+        CreateMemoViewModel(
+            saveMemo = get(),
+            validateMemo = get()
+        )
+    }
 }

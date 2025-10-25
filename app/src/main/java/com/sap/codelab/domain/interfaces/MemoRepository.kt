@@ -1,29 +1,29 @@
-package com.sap.codelab.domain
+package com.sap.codelab.domain.interfaces
 
-import com.sap.codelab.data.model.MemoModel
+import com.sap.codelab.domain.model.Memo
 
 /**
  * Interface for a repository offering memo related CRUD operations.
  */
-internal interface MemoRepository {
+interface MemoRepository {
 
     /**
      * Saves the given memo to the database.
      */
-    fun saveMemo(memoModel: MemoModel)
+    suspend fun saveMemo(memo: Memo)
 
     /**
      * @return all memos currently in the database.
      */
-    fun getAll(): List<MemoModel>
+    suspend fun getAll(): List<Memo>
 
     /**
      * @return all memos currently in the database, except those that have been marked as "done".
      */
-    fun getOpen(): List<MemoModel>
+    suspend fun getOpen(): List<Memo>
 
     /**
      * @return the memo whose id matches the given id.
      */
-    fun getMemoById(id: Long): MemoModel
+    suspend fun getMemoById(id: Long): Memo
 }

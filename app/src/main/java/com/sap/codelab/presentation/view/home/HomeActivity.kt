@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sap.codelab.R
 import com.sap.codelab.data.model.MemoModel
 import com.sap.codelab.databinding.ActivityHomeBinding
+import com.sap.codelab.domain.model.Memo
 import com.sap.codelab.presentation.view.create.CreateMemoActivity
 import com.sap.codelab.presentation.view.detail.BUNDLE_MEMO_ID
 import com.sap.codelab.presentation.view.detail.ViewMemoActivity
@@ -59,7 +60,7 @@ internal class HomeActivity : AppCompatActivity() {
             showMemo((view.tag as MemoModel).id)
         }, { checkbox, isChecked ->
             // Implementation for when the user marks a memo as completed
-            model.updateMemo(checkbox.tag as MemoModel, isChecked)
+            model.updateMemo(checkbox.tag as Memo, isChecked)
             model.refreshMemos()
         })
         lifecycle.coroutineScope.launch {

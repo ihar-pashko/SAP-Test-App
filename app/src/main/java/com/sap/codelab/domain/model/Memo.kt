@@ -1,4 +1,4 @@
-package com.sap.codelab.domain
+package com.sap.codelab.domain.model
 
 data class Memo(
     var id: Long,

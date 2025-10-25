@@ -1,36 +1,26 @@
 package com.sap.codelab.data.repository
 
-import androidx.room.Room
-import android.content.Context
 import androidx.annotation.WorkerThread
-import com.sap.codelab.data.database.Database
+import com.sap.codelab.data.database.MemoDao
 import com.sap.codelab.data.model.Memo
 import com.sap.codelab.domain.IMemoRepository
-
-private const val DATABASE_NAME: String = "codelab"
 
 /**
  * The repository is used to retrieve data from a data source.
  */
-internal object Repository : IMemoRepository {
-
-    private lateinit var database: Database
-
-    fun initialize(applicationContext: Context) {
-        database = Room.databaseBuilder(applicationContext, Database::class.java, DATABASE_NAME).build()
-    }
+internal class Repository(
+    private val getMemoDao: MemoDao
+) : IMemoRepository {
 
     @WorkerThread
-    override fun saveMemo(memo: Memo) {
-        database.getMemoDao().insert(memo)
-    }
+    override fun saveMemo(memo: Memo) = getMemoDao.insert(memo)
 
     @WorkerThread
-    override fun getOpen(): List<Memo> = database.getMemoDao().getOpen()
+    override fun getOpen(): List<Memo> = getMemoDao.getOpen()
 
     @WorkerThread
-    override fun getAll(): List<Memo> = database.getMemoDao().getAll()
+    override fun getAll(): List<Memo> = getMemoDao.getAll()
 
     @WorkerThread
-    override fun getMemoById(id: Long): Memo = database.getMemoDao().getMemoById(id)
+    override fun getMemoById(id: Long): Memo = getMemoDao.getMemoById(id)
 }

@@ -1,7 +1,11 @@
 package com.sap.codelab
 
 import android.app.Application
-import com.sap.codelab.data.repository.Repository
+import com.sap.codelab.di.databaseModule
+import com.sap.codelab.di.repositoryModule
+import com.sap.codelab.di.viewModelModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 /**
  * Extension of the Android Application class.
@@ -9,6 +13,15 @@ import com.sap.codelab.data.repository.Repository
 internal class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        Repository.initialize(this)
+        startKoin {
+            androidContext(this@App)
+            modules(
+                listOf(
+                    databaseModule,
+                    repositoryModule,
+                    viewModelModule
+                )
+            )
+        }
     }
 }

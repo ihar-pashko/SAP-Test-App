@@ -2,7 +2,7 @@ package com.sap.codelab.presentation.view.create
 
 import androidx.lifecycle.ViewModel
 import com.sap.codelab.data.model.Memo
-import com.sap.codelab.data.repository.Repository
+import com.sap.codelab.domain.IMemoRepository
 import com.sap.codelab.utils.coroutines.ScopeProvider
 import com.sap.codelab.utils.extensions.empty
 import kotlinx.coroutines.launch
@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel for matching CreateMemo view. Handles user interactions.
  */
-internal class CreateMemoViewModel : ViewModel() {
+internal class CreateMemoViewModel(private val repository: IMemoRepository) : ViewModel() {
 
     private var memo = Memo(0, String.empty(), String.empty(), 0, 0, 0, false)
 
@@ -19,7 +19,7 @@ internal class CreateMemoViewModel : ViewModel() {
      */
     fun saveMemo() {
         ScopeProvider.application.launch {
-            Repository.saveMemo(memo)
+            repository.saveMemo(memo)
         }
     }
 

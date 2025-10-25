@@ -3,7 +3,7 @@ package com.sap.codelab.presentation.view.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sap.codelab.data.model.Memo
-import com.sap.codelab.data.repository.Repository
+import com.sap.codelab.domain.IMemoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel for matching ViewMemo view.
  */
-internal class ViewMemoViewModel : ViewModel() {
+internal class ViewMemoViewModel(private val repository: IMemoRepository) : ViewModel() {
 
     private val _memo: MutableStateFlow<Memo?> = MutableStateFlow(null)
     val memo: StateFlow<Memo?> = _memo
@@ -22,7 +22,7 @@ internal class ViewMemoViewModel : ViewModel() {
      */
     fun loadMemo(memoId: Long) {
         viewModelScope.launch(Dispatchers.Default) {
-            _memo.value = Repository.getMemoById(memoId)
+            _memo.value = repository.getMemoById(memoId)
         }
     }
 }

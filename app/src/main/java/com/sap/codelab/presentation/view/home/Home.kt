@@ -2,21 +2,21 @@ package com.sap.codelab.presentation.view.home
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.coroutineScope
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.sap.codelab.R
-import com.sap.codelab.databinding.ActivityHomeBinding
 import com.sap.codelab.data.model.Memo
+import com.sap.codelab.databinding.ActivityHomeBinding
 import com.sap.codelab.presentation.view.create.CreateMemo
 import com.sap.codelab.presentation.view.detail.BUNDLE_MEMO_ID
 import com.sap.codelab.presentation.view.detail.ViewMemo
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * The main activity of the app. Shows a list of recorded memos and lets the user add new memos.
@@ -24,21 +24,21 @@ import kotlinx.coroutines.launch
 internal class Home : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var model: HomeViewModel
+    private val model: HomeViewModel by viewModel()
     private lateinit var menuItemShowAll: MenuItem
     private lateinit var menuItemShowOpen: MenuItem
-    private val createMemoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            model.refreshMemos()
+    private val createMemoLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                model.refreshMemos()
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        model = ViewModelProvider(this)[HomeViewModel::class.java]
 
         // Setup the adapter and the recycler view
         setupRecyclerView(initializeAdapter())
@@ -53,7 +53,7 @@ internal class Home : AppCompatActivity() {
     /**
      * Initializes the adapter and sets the needed callbacks.
      */
-    private fun initializeAdapter() : MemoAdapter {
+    private fun initializeAdapter(): MemoAdapter {
         val adapter = MemoAdapter(mutableListOf(), { view ->
             // Implementation for when the user selects a row to show the detail view
             showMemo((view.tag as Memo).id)
@@ -88,7 +88,12 @@ internal class Home : AppCompatActivity() {
         binding.contentHome.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@Home, LinearLayoutManager.VERTICAL, false)
             this.adapter = adapter
-            addItemDecoration(DividerItemDecoration(this@Home, (layoutManager as LinearLayoutManager).orientation))
+            addItemDecoration(
+                DividerItemDecoration(
+                    this@Home,
+                    (layoutManager as LinearLayoutManager).orientation
+                )
+            )
         }
     }
 
@@ -111,6 +116,7 @@ internal class Home : AppCompatActivity() {
                 menuItemShowOpen.isVisible = true
                 true
             }
+
             R.id.action_show_open -> {
                 model.loadOpenMemos()
                 //Switch available menu options

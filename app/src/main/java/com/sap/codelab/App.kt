@@ -2,8 +2,10 @@ package com.sap.codelab
 
 import android.app.Application
 import com.sap.codelab.di.databaseModule
-import com.sap.codelab.di.mapperModule
-import com.sap.codelab.di.memoRepositoryImplModule
+import com.sap.codelab.di.dispatcherModule
+import com.sap.codelab.di.domainMapperModule
+import com.sap.codelab.di.repositoryModule
+import com.sap.codelab.di.uiMapperModule
 import com.sap.codelab.di.useCaseModule
 import com.sap.codelab.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
@@ -20,10 +22,12 @@ internal class App : Application() {
             modules(
                 listOf(
                     databaseModule,
-                    memoRepositoryImplModule,
+                    repositoryModule,
                     viewModelModule,
-                    mapperModule,
-                    useCaseModule
+                    domainMapperModule,
+                    useCaseModule,
+                    dispatcherModule,
+                    uiMapperModule
                 )
             )
         }

@@ -4,7 +4,7 @@ import com.sap.codelab.domain.interfaces.MemoRepository
 import com.sap.codelab.domain.model.Memo
 
 class GetMemoByIdUseCase(private val repository: MemoRepository) {
-    suspend operator fun invoke(id: Long): Memo {
+    suspend operator fun invoke(id: Long): Result<Memo> {
         return repository.getMemoById(id)
     }
 }

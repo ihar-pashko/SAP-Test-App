@@ -10,20 +10,20 @@ interface MemoRepository {
     /**
      * Saves the given memo to the database.
      */
-    suspend fun saveMemo(memo: Memo)
+    suspend fun saveMemo(memo: Memo): Result<Unit>
 
     /**
      * @return all memos currently in the database.
      */
-    suspend fun getAll(): List<Memo>
+    suspend fun getAll(): Result<List<Memo>>
 
     /**
      * @return all memos currently in the database, except those that have been marked as "done".
      */
-    suspend fun getOpen(): List<Memo>
+    suspend fun getOpen(): Result<List<Memo>>
 
     /**
      * @return the memo whose id matches the given id.
      */
-    suspend fun getMemoById(id: Long): Memo
+    suspend fun getMemoById(id: Long): Result<Memo>
 }

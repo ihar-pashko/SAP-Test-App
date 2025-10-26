@@ -2,12 +2,16 @@ package com.sap.codelab.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
  * Represents a memo.
  */
-@Entity(tableName = "memo")
+@Entity(
+    tableName = "memo",
+    indices = [Index("isDone")]
+)
 data class MemoModel(
     @ColumnInfo(name = "id")
     @PrimaryKey(autoGenerate = true)

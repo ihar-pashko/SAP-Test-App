@@ -3,4 +3,5 @@ package com.sap.codelab.utils.extensions
 /**
  * @return an empty String.
  */
-fun String.Companion.empty(): String = ""
+inline val String.Companion.empty: String
+    get() = ""

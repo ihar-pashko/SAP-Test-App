@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.sap.codelab.R
 import com.sap.codelab.databinding.FragmentHomeBinding
-import com.sap.codelab.domain.model.Memo
 import com.sap.codelab.presentation.adapters.MemoAdapter
 import com.sap.codelab.presentation.viewmodels.HomeViewModel
 import kotlinx.coroutines.launch
@@ -45,19 +44,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun initializeAdapter(): MemoAdapter {
-        val adapter = MemoAdapter(mutableListOf(), { view ->
-            val memo = view.tag as Memo
-            val action = HomeFragmentDirections.actionHomeFragmentToViewMemoFragment(memo.id)
-            findNavController().navigate(action)
-        }, { checkbox, isChecked ->
-            val memo = checkbox.tag as Memo
-            viewModel.updateMemo(memo, isChecked)
-            viewModel.refreshMemos()
-        })
+        val adapter = MemoAdapter(
+            onMemoClick = { memo ->
+                val action = HomeFragmentDirections.actionHomeFragmentToViewMemoFragment(memo.id)
+                findNavController().navigate(action)
+            },
+            onDoneClick = { memo, isChecked ->
+                viewModel.updateMemo(memo, isChecked)
+            }
+        )
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.memos.collect { memos ->
-                adapter.setItems(memos)
+                adapter.submitList(memos)
             }
         }
         return adapter

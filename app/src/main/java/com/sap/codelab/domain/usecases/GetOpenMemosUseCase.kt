@@ -5,7 +5,7 @@ import com.sap.codelab.domain.model.Memo
 
 class GetOpenMemosUseCase(private val repository: MemoRepository) {
 
-    suspend operator fun invoke(): List<Memo> {
+    suspend operator fun invoke(): Result<List<Memo>> {
         return repository.getOpen()
     }
 }

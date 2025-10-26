@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.sap.codelab.presentation.fragments.HomeFragment"
+        android:name="com.sap.codelab.presentation.home.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
 
@@ -23,13 +23,13 @@
 
     <fragment
         android:id="@+id/createMemoFragment"
-        android:name="com.sap.codelab.presentation.fragments.CreateMemoFragment"
+        android:name="com.sap.codelab.presentation.create.CreateMemoFragment"
         android:label="Create Memo"
         tools:layout="@layout/fragment_create_memo" />
 
     <fragment
         android:id="@+id/viewMemoFragment"
-        android:name="com.sap.codelab.presentation.fragments.ViewMemoFragment"
+        android:name="com.sap.codelab.presentation.view.ViewMemoFragment"
         android:label="View Memo"
         tools:layout="@layout/fragment_view_memo">
 

@@ -1,4 +1,4 @@
-package com.sap.codelab.presentation.fragments
+package com.sap.codelab.presentation.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,9 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
 abstract class BaseFragment<VB : ViewBinding>(
@@ -44,20 +41,6 @@ abstract class BaseFragment<VB : ViewBinding>(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    protected fun setupVerticalRecyclerView(
-        recyclerView: RecyclerView,
-        adapter: RecyclerView.Adapter<*>,
-        hasFixedSize: Boolean = true
-    ) {
-        val linearLayoutManager = LinearLayoutManager(requireContext())
-        recyclerView.layoutManager = linearLayoutManager
-        recyclerView.adapter = adapter
-        recyclerView.setHasFixedSize(hasFixedSize)
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(requireContext(), linearLayoutManager.orientation)
-        )
     }
 
     private fun setupToolbar() {

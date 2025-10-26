@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:padding="@dimen/padding_activity"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.sap.codelab.presentation.view.create.CreateMemoActivity"
-    tools:showIn="@layout/activity_create_memo">
+    tools:context="com.sap.codelab.presentation.fragments.CreateMemoFragment"
+    tools:showIn="@layout/fragment_create_memo">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/memo_title_container"

@@ -1,4 +1,4 @@
-package com.sap.codelab.presentation.view
+package com.sap.codelab.presentation.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

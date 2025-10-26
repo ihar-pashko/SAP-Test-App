@@ -1,4 +1,4 @@
-package com.sap.codelab.presentation.view.create
+package com.sap.codelab.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import com.sap.codelab.domain.model.Memo
@@ -16,7 +16,7 @@ internal class CreateMemoViewModel(
     private val validateMemo: ValidateMemoUseCase
 ) : ViewModel() {
 
-    private var memo = Memo(0, String.empty(), String.empty(), 0, 0, 0, false)
+    private var memo = Memo(0, String.Companion.empty(), String.empty(), 0, 0, 0, false)
     private var validationResult: ValidateMemoUseCase.MemoValidationResult? = null
 
     /**
@@ -32,7 +32,15 @@ internal class CreateMemoViewModel(
      * Call this method to update the memo. This is usually needed when the user changed his input.
      */
     fun updateMemo(title: String, description: String) {
-        memo = Memo(title = title, description = description, id = 0, reminderDate = 0, reminderLatitude = 0, reminderLongitude = 0, isDone = false)
+        memo = Memo(
+            title = title,
+            description = description,
+            id = 0,
+            reminderDate = 0,
+            reminderLatitude = 0,
+            reminderLongitude = 0,
+            isDone = false
+        )
         validationResult = null
     }
 

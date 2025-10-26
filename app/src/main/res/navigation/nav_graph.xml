@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.sap.codelab.presentation.view.home.HomeFragment"
+        android:name="com.sap.codelab.presentation.fragments.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/activity_home">
+        tools:layout="@layout/fragment_home">
 
         <action
             android:id="@+id/action_homeFragment_to_createMemoFragment"
@@ -23,15 +23,15 @@
 
     <fragment
         android:id="@+id/createMemoFragment"
-        android:name="com.sap.codelab.presentation.view.create.CreateMemoFragment"
+        android:name="com.sap.codelab.presentation.fragments.CreateMemoFragment"
         android:label="Create Memo"
-        tools:layout="@layout/activity_create_memo" />
+        tools:layout="@layout/fragment_create_memo" />
 
     <fragment
         android:id="@+id/viewMemoFragment"
-        android:name="com.sap.codelab.presentation.view.detail.ViewMemoFragment"
+        android:name="com.sap.codelab.presentation.fragments.ViewMemoFragment"
         android:label="View Memo"
-        tools:layout="@layout/activity_view_memo">
+        tools:layout="@layout/fragment_view_memo">
 
         <argument
             android:name="memoId"

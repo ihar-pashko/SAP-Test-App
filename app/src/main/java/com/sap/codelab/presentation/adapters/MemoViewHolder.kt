@@ -1,4 +1,4 @@
-package com.sap.codelab.presentation.view.home
+package com.sap.codelab.presentation.adapters
 
 import android.view.View
 import android.widget.CompoundButton

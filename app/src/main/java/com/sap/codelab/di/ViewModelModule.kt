@@ -1,8 +1,8 @@
 package com.sap.codelab.di
 
-import com.sap.codelab.presentation.view.create.CreateMemoViewModel
-import com.sap.codelab.presentation.view.detail.ViewMemoViewModel
-import com.sap.codelab.presentation.view.home.HomeViewModel
+import com.sap.codelab.presentation.viewmodels.CreateMemoViewModel
+import com.sap.codelab.presentation.viewmodels.HomeViewModel
+import com.sap.codelab.presentation.viewmodels.ViewMemoViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 

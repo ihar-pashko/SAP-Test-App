@@ -4,6 +4,7 @@ This repository is my solution to the Android coding challenge for location-base
 
 The goal: let the user create a memo with a location, and automatically show a notification when the user physically arrives at that place — even if the app is in the background.
 
+*See a demonstration of the app in action: [SAP-Test-App-Demo](./app/src/main/assets/SAP-Test-App-Demo.gif)*
 ---
 
 ## Features
@@ -146,5 +147,3 @@ On an emulator you can do this using the “Location” controls in the Extended
 
 Thanks for reviewing the solution 🙌  
 This version is intended to be close to something I'd be comfortable shipping in a real app (permission flows, background behavior, clean layering), not just a quick prototype.
-
-See a demonstration of the app in action: [SAP-Test-App-Demo](./app/src/main/assets/SAP-Test-App-Demo.gif)

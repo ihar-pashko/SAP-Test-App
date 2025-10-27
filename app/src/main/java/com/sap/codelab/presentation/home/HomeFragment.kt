@@ -23,7 +23,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private val viewModel: HomeViewModel by viewModel()
 
-    override val toolbar: Toolbar?
+    override val toolbar: Toolbar
         get() = binding.toolbar
 
     override fun FragmentHomeBinding.onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,7 +34,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             findNavController().navigate(R.id.action_homeFragment_to_createMemoFragment)
         }
 
-        setFragmentResultListener(CreateMemoFragment.Companion.REQUEST_KEY_MEMO_CREATED) { _, _ ->
+        setFragmentResultListener(CreateMemoFragment.REQUEST_KEY_MEMO_CREATED) { _, _ ->
             viewModel.refreshMemos()
         }
 
@@ -67,7 +67,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun setupRecyclerView(adapter: MemoAdapter) {
         binding.contentHome.recyclerView.apply {
-            val linearLayoutManager = LinearLayoutManager(requireContext()) // Можно создать здесь
+            val linearLayoutManager = LinearLayoutManager(requireContext())
             layoutManager = linearLayoutManager
             this.adapter = adapter
             setHasFixedSize(true)

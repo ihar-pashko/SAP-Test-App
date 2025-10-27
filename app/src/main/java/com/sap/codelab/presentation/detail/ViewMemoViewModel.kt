@@ -1,4 +1,4 @@
-package com.sap.codelab.presentation.view
+package com.sap.codelab.presentation.detail
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

@@ -10,7 +10,6 @@ class MemoMapperImpl : MemoMapper {
             id = model.id,
             title = model.title,
             description = model.description,
-            reminderDate = model.reminderDate,
             reminderLatitude = model.reminderLatitude,
             reminderLongitude = model.reminderLongitude,
             isDone = model.isDone
@@ -22,7 +21,6 @@ class MemoMapperImpl : MemoMapper {
             id = memo.id,
             title = memo.title,
             description = memo.description,
-            reminderDate = memo.reminderDate,
             reminderLatitude = memo.reminderLatitude,
             reminderLongitude = memo.reminderLongitude,
             isDone = memo.isDone

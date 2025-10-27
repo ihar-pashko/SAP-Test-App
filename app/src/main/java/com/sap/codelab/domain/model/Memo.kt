@@ -4,8 +4,7 @@ data class Memo(
     var id: Long,
     var title: String,
     var description: String,
-    var reminderDate: Long,
-    var reminderLatitude: Long,
-    var reminderLongitude: Long,
+    var reminderLatitude: Double? = null,
+    var reminderLongitude: Double? = null,
     var isDone: Boolean = false
 )

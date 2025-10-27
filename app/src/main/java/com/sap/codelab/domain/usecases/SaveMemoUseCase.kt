@@ -5,16 +5,20 @@ import com.sap.codelab.domain.model.Memo
 
 class SaveMemoUseCase(private val repository: MemoRepository) {
 
-    suspend operator fun invoke(title: String, description: String) {
+    suspend operator fun invoke(
+        title: String,
+        description: String,
+        latitude: Double?,
+        longitude: Double?
+    ): Result<Long> {
         val newMemo = Memo(
             id = 0,
             title = title,
             description = description,
-            reminderDate = 0,
-            reminderLatitude = 0,
-            reminderLongitude = 0,
+            reminderLatitude = latitude,
+            reminderLongitude = longitude,
             isDone = false
         )
-        repository.saveMemo(newMemo)
+        return repository.saveMemo(newMemo)
     }
 }

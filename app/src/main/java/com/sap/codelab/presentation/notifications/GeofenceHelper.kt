@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
@@ -28,12 +29,19 @@ class GeofenceHelper(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     fun addGeofence(id: String, latitude: Double, longitude: Double, radius: Float) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             Log.w("GeofenceHelper", "Fine location permission not granted.")
             return
         }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q &&
-            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             Log.w("GeofenceHelper", "Background location permission not granted.")
             return
@@ -57,6 +65,22 @@ class GeofenceHelper(private val context: Context) {
             }
             .addOnFailureListener { exception ->
                 Log.e("GeofenceHelper", "Failed to add geofence: $id", exception)
+            }
+    }
+
+    fun removeGeofence(id: String) {
+        geofencingClient.removeGeofences(listOf(id))
+            .addOnSuccessListener {
+                Log.i("GeofenceHelper", "Geofence removed successfully: $id")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("GeofenceHelper", "Failed to remove geofence: $id", exception)
+                if (exception is ApiException) {
+                    Log.e(
+                        "GeofenceHelper",
+                        "Remove Geofence API Error Code: ${exception.statusCode}"
+                    )
+                }
             }
     }
 }

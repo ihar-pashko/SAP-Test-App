@@ -11,7 +11,8 @@ val repositoryModule = module {
         MemoRepositoryImpl(
             memoDao = get(),
             mapper = get(),
-            ioDispatcher = get(named(Dispatchers.IO::class.simpleName.orEmpty()))
+            ioDispatcher = get(named(Dispatchers.IO::class.simpleName.orEmpty())),
+            geofenceHelper = get()
         )
     }
 }

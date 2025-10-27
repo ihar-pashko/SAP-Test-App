@@ -26,4 +26,7 @@ interface MemoRepository {
      * @return the memo whose id matches the given id.
      */
     suspend fun getMemoById(id: Long): Result<Memo>
+
+    suspend fun addGeofenceForMemo(memo: Memo): Result<Unit>
+    suspend fun removeGeofenceForMemo(memoId: Long): Result<Unit>
 }

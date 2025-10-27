@@ -23,6 +23,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -34,9 +35,13 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.sap.codelab.R
 import com.sap.codelab.databinding.FragmentCreateMemoBinding
+import com.sap.codelab.domain.model.Memo
+import com.sap.codelab.domain.usecases.AddGeofenceForMemoUseCase
+import com.sap.codelab.domain.usecases.GetMemoByIdUseCase
 import com.sap.codelab.presentation.base.BaseFragment
-import com.sap.codelab.presentation.notifications.GeofenceHelper
 import com.sap.codelab.utils.extensions.collectInLifecycle
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CreateMemoFragment :
@@ -46,7 +51,11 @@ class CreateMemoFragment :
     private val viewModel: CreateMemoViewModel by viewModel()
     private var googleMap: GoogleMap? = null
     private var currentMarker: Marker? = null
-    private lateinit var geofenceHelper: GeofenceHelper
+
+    private var pendingMemoForGeofence: Memo? = null
+
+    private val addGeofenceUseCase: AddGeofenceForMemoUseCase by inject()
+    private val getMemoByIdUseCase: GetMemoByIdUseCase by inject()
 
     private val requestLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -75,24 +84,10 @@ class CreateMemoFragment :
             }
         }
 
-    private val requestBackgroundLocationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                tryRegisterGeofenceAfterPermissionGrant()
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.background_location_permission_denied,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
-
     override val toolbar: Toolbar
         get() = binding.toolbar
 
     override fun FragmentCreateMemoBinding.onViewCreated(view: View, savedInstanceState: Bundle?) {
-        geofenceHelper = GeofenceHelper(requireContext())
         setupMenu()
         observeViewModel()
         setupInputListeners()
@@ -125,7 +120,7 @@ class CreateMemoFragment :
         viewModel.events.collectInLifecycle(this) { event ->
             when (event) {
                 is CreateMemoEvent.NavigateBackWithSuccess -> {
-                    tryRegisterGeofence(event.memoId)
+                    addGeofenceAfterSave(event.memoId)
                     setFragmentResult(REQUEST_KEY_MEMO_CREATED, bundleOf())
                     findNavController().popBackStack()
                 }
@@ -156,41 +151,71 @@ class CreateMemoFragment :
         }
     }
 
-    private fun tryRegisterGeofence(memoId: Long) {
+    private fun addGeofenceAfterSave(memoId: Long) {
         val location = viewModel.selectedLocation.value
         if (location != null && memoId > 0) {
-            if (checkBackgroundLocationPermission()) {
-                registerGeofence(memoId, location)
+            viewLifecycleOwner.lifecycleScope.launch {
+                getMemoByIdUseCase(memoId)
+                    .onSuccess { savedMemo ->
+                        if (checkBackgroundLocationPermission()) {
+                            addGeofenceUseCase(savedMemo)
+                                .onFailure { error ->
+                                    Log.w(
+                                        "CreateMemoFragment",
+                                        "Failed to add geofence via UseCase",
+                                        error
+                                    )
+                                }
+                        } else {
+                            pendingMemoForGeofence = savedMemo
+                            requestBackgroundLocationPermission()
+                        }
+                    }
+                    .onFailure { getError ->
+                        Log.e(
+                            "CreateMemoFragment",
+                            "Failed to get saved memo $memoId for geofence",
+                            getError
+                        )
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to get data for geofence.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+        }
+    }
+
+    private fun addPendingGeofence() {
+        pendingMemoForGeofence?.let { memo ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                addGeofenceUseCase(memo)
+                    .onFailure { error ->
+                        Log.w(
+                            "CreateMemoFragment",
+                            "Failed to add PENDING geofence via UseCase",
+                            error
+                        )
+                    }
+                pendingMemoForGeofence = null
+            }
+        }
+    }
+
+    private val requestBackgroundLocationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                addPendingGeofence()
             } else {
-                pendingGeofenceMemoId = memoId
-                requestBackgroundLocationPermission()
-            }
-        } else if (memoId <= 0) {
-            Log.w("CreateMemoFragment", "Invalid memoId ($memoId), cannot register geofence.")
-        }
-    }
-
-    private fun registerGeofence(memoId: Long, location: LatLng) {
-        Log.d("CreateMemoFragment", "Registering geofence for memo $memoId")
-        geofenceHelper.addGeofence(
-            id = memoId.toString(),
-            latitude = location.latitude,
-            longitude = location.longitude,
-            radius = 200f
-        )
-        pendingGeofenceMemoId = null
-    }
-
-    private var pendingGeofenceMemoId: Long? = null
-
-    private fun tryRegisterGeofenceAfterPermissionGrant() {
-        pendingGeofenceMemoId?.let { memoId ->
-            val location = viewModel.selectedLocation.value
-            if (location != null) {
-                registerGeofence(memoId, location)
+                Toast.makeText(
+                    requireContext(),
+                    R.string.background_location_permission_denied,
+                    Toast.LENGTH_LONG
+                ).show()
+                pendingMemoForGeofence = null
             }
         }
-    }
 
     private fun setupMenu() {
         requireActivity().addMenuProvider(

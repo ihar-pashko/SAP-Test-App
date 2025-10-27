@@ -4,6 +4,7 @@ import android.app.Application
 import com.sap.codelab.di.databaseModule
 import com.sap.codelab.di.dispatcherModule
 import com.sap.codelab.di.domainMapperModule
+import com.sap.codelab.di.helperModule
 import com.sap.codelab.di.notificationModule
 import com.sap.codelab.di.receiverModule
 import com.sap.codelab.di.repositoryModule
@@ -32,7 +33,8 @@ internal class App : Application() {
                     dispatcherModule,
                     uiMapperModule,
                     notificationModule,
-                    receiverModule
+                    receiverModule,
+                    helperModule
                 )
             )
 

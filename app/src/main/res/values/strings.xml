@@ -9,7 +9,7 @@
     <string name="memo_title_empty_error">Please provide a title for this memo</string>
     <string name="memo_text_empty_error">Please provide a memo description</string>
     <string name="select_location">Select location</string>
-    <string name="clean">Clean</string>
+    <string name="delete">Delete</string>
     <string name="location_permission_denied">Location permission is required to select a point and set reminders</string>
     <string name="background_location_permission_denied">Background location is required for reminders to work when the app is closed</string>
     <string name="location_permission_rationale">Permission is needed to select a point on the map.</string>

@@ -18,6 +18,6 @@ internal abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "codelab"
-        const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 1
     }
 }

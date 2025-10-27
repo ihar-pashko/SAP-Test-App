@@ -90,7 +90,7 @@ class CreateMemoFragment :
             }
         }
 
-    override val toolbar: Toolbar?
+    override val toolbar: Toolbar
         get() = binding.toolbar
 
     override fun FragmentCreateMemoBinding.onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -187,7 +187,7 @@ class CreateMemoFragment :
             id = memoId.toString(),
             latitude = location.latitude,
             longitude = location.longitude,
-            radius = 200f // 200 метров
+            radius = 200f
         )
         pendingGeofenceMemoId = null
     }

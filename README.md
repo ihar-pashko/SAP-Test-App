@@ -1,30 +1,51 @@
-# android-codelab
-Android project that serves as a base for code challenges implemented by applicants.
-The base is written in kotlin. 
+# Android Memos App 📝
 
-(!)If you have the NDK plugin installed, please disable it for the project, as errors may occur.
+This Android application allows users to create and manage memos, with a special feature for location-based reminders. The project is built entirely in Kotlin, following modern Android development practices.
 
-# Android Coding Challenges
-Coding challenges are useful when the applicant does not provide a github repository or any work samples. Even if a github repository has been provided it is generally a good idea to give the applicant a task to solve and have him present his solution in a separate session. 
+**(!) Important:** If you have the NDK plugin installed, please disable it for this project in Android Studio (`File` -> `Project Structure` -> `SDK Location` -> Untick `Download Android NDK if not installed`), as errors may occur.
 
-## General Instructions
-The following instructions/conditions are valid independently of the actual coding challenge
+---
 
-- The code base has been tested with Android Studio Narwhal Feature Drop which is the recommended version, however feel free to try a higher version and adjust the configuration as needed
-- The task should be implemented in kotlin
-- Approach this task as if it was a real-world implementation - i.e. exactly how you would approach the task if you were working for a company
-- 3rd party libraries may be used
-- The base project for this task will be provided by us
-- Once completed, please send us your solution and presents it to us, followed by a discussion about the implementation and design decisions made
-- The solution can be sent as a zip file or as a publicly accessible github/gitlub etc project link
-- The solution sent to us must be complete, i.e. can be opened directly via Android Studio without additional configuration
+## Key Feature: Location-Based Notifications 📍🔔
 
-## Location Based Notifications
-In this challenge the applicant has to implement location-based notifications/reminders, the following conditions are given:
+The app includes a powerful feature for setting reminders based on geographic location:
 
-- When creating a new memo, the user provides a location by selecting a point on a map (for instance: google maps or open street maps)
-- The memo is then saved
-- Once the user physically reaches that location, a notification should be displayed in the phone's status bar, that contains the title and the first 140 characters of the note text
-- "Reaching the location" is defined as follows: The user is within 200 meters of the location he initially selected during the memo creation
-- The notification should also contain an icon (the icon choice is up to you)
-- The feature must also work, when the app is running in the background (or possibly not running at all)
+1.  **Add Location to Memo:** When creating a new memo, you can optionally select a specific location on an integrated Google Map.
+2.  **Automatic Reminders:** Once a memo with a location is saved, the app uses efficient background monitoring. When your device enters a 200-meter radius around the saved location, you'll receive a notification.
+3.  **Informative Notifications:** The notification conveniently displays the memo's title and the beginning of its description (up to 140 characters), along with a custom app icon.
+4.  **Works Anytime:** The location monitoring and notification triggering function reliably, even if the app is running in the background or has been closed.
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+This project utilizes a modern tech stack and architectural patterns:
+
+* **Language:** **Kotlin** (100%)
+* **Architecture:**
+    * **Clean Architecture:** Divided into **Data**, **Domain**, and **Presentation** layers.
+    * **MVVM** (Model-View-ViewModel): Separating UI logic from business logic.
+    * **Single-Activity Architecture:** Using the **Android Navigation Component** to manage Fragments within a single `MainActivity`.
+* **UI:**
+    * **Android Fragments:** Modular UI components.
+    * **ViewBinding:** Safe view access.
+    * **Material Design Components:** Standard Material UI elements (`MaterialToolbar`, `MaterialButton`, `TextInputLayout`, etc.).
+    * **RecyclerView with `ListAdapter` & `DiffUtil`:** Efficient list display.
+    * **Google Maps SDK:** Map display and location selection.
+* **Asynchronous Programming:**
+    * **Kotlin Coroutines:** Background thread management.
+    * **Kotlin Flow (`StateFlow`, `Channel`):** Reactive data streams and event handling. Offline-first approach for observing database changes.
+* **Dependency Injection:**
+    * **Koin:** Managing dependencies across layers.
+* **Data Persistence:**
+    * **Room Persistence Library:** Local SQLite database storage with migrations.
+    * **Indices:** Database index on `isDone` column for query optimization.
+* **Location & Background:**
+    * **Google Play Services - Location:** **Geofencing API** for efficient background location monitoring.
+    * **BroadcastReceiver:** Receiving geofence events when the app is inactive.
+* **Notifications:**
+    * **`NotificationManagerCompat` & Notification Channels:** Creating system notifications.
+* **Code Quality:**
+    * **Detekt:** Static code analysis with formatting rules via `detekt.yml`.
+* **Build System:**
+    * **Gradle:** Using **Version Catalogs** (`libs.versions.toml`) for dependency management.

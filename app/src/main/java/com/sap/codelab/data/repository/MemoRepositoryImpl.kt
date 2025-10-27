@@ -53,22 +53,26 @@ internal class MemoRepositoryImpl(
     override suspend fun getMemoById(id: Long): Result<Memo> = withContext(ioDispatcher) {
         try {
             val memoModel = memoDao.getMemoById(id)
-            val memo = mapper.fromModelToUI(memoModel)
-            Result.success(memo)
+            if (memoModel != null) {
+                val memo = mapper.fromModelToUI(memoModel)
+                Result.success(memo)
+            } else {
+                Result.failure(NoSuchElementException("Memo with id $id not found"))
+            }
         } catch (e: Exception) {
             Log.e("MemoRepository", "Error getting memo by ID: $id", e)
             Result.failure(e)
         }
     }
 
-    override suspend fun addGeofenceForMemo(memo: Memo): Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun addGeofenceForMemo(memo: Memo, radius: Float): Result<Unit> = withContext(ioDispatcher) {
         if (memo.id > 0 && memo.reminderLatitude != null && memo.reminderLongitude != null) {
             try {
                 geofenceHelper.addGeofence(
                     id = memo.id.toString(),
                     latitude = memo.reminderLatitude,
                     longitude = memo.reminderLongitude,
-                    radius = RADIUS
+                    radius = radius
                 )
                 Result.success(Unit)
             } catch (e: SecurityException) {
@@ -96,9 +100,5 @@ internal class MemoRepositoryImpl(
         } else {
             Result.success(Unit)
         }
-    }
-
-    companion object {
-        private const val RADIUS = 200f
     }
 }

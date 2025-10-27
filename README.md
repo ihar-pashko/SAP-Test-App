@@ -1,51 +1,148 @@
-# Android Memos App 📝
+# Location-Based Memo Reminder App ![App Icon](./app/src/main/assets/app_icon.webp)
 
-This Android application allows users to create and manage memos, with a special feature for location-based reminders. The project is built entirely in Kotlin, following modern Android development practices.
+This repository is my solution to the Android coding challenge for location-based reminders.
 
-**(!) Important:** If you have the NDK plugin installed, please disable it for this project in Android Studio (`File` -> `Project Structure` -> `SDK Location` -> Untick `Download Android NDK if not installed`), as errors may occur.
-
----
-
-## Key Feature: Location-Based Notifications 📍🔔
-
-The app includes a powerful feature for setting reminders based on geographic location:
-
-1.  **Add Location to Memo:** When creating a new memo, you can optionally select a specific location on an integrated Google Map.
-2.  **Automatic Reminders:** Once a memo with a location is saved, the app uses efficient background monitoring. When your device enters a 200-meter radius around the saved location, you'll receive a notification.
-3.  **Informative Notifications:** The notification conveniently displays the memo's title and the beginning of its description (up to 140 characters), along with a custom app icon.
-4.  **Works Anytime:** The location monitoring and notification triggering function reliably, even if the app is running in the background or has been closed.
+The goal: let the user create a memo with a location, and automatically show a notification when the user physically arrives at that place — even if the app is in the background.
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## Features
 
-This project utilizes a modern tech stack and architectural patterns:
+- Create memos with:
+  - Title
+  - Description
+  - Location selected on a map
+- Store memos locally using Room
+- Automatically trigger a notification when the user enters a 200m radius around the saved location
+- Notification shows:
+  - Memo title
+  - First 140 characters of the memo
+  - Small status bar icon
+- Works in background (via `BroadcastReceiver`)
+- Filter memos on the home screen:
+  - All memos
+  - Only “open” (not done yet)
+- Mark memo as done from the list
 
-* **Language:** **Kotlin** (100%)
-* **Architecture:**
-    * **Clean Architecture:** Divided into **Data**, **Domain**, and **Presentation** layers.
-    * **MVVM** (Model-View-ViewModel): Separating UI logic from business logic.
-    * **Single-Activity Architecture:** Using the **Android Navigation Component** to manage Fragments within a single `MainActivity`.
-* **UI:**
-    * **Android Fragments:** Modular UI components.
-    * **ViewBinding:** Safe view access.
-    * **Material Design Components:** Standard Material UI elements (`MaterialToolbar`, `MaterialButton`, `TextInputLayout`, etc.).
-    * **RecyclerView with `ListAdapter` & `DiffUtil`:** Efficient list display.
-    * **Google Maps SDK:** Map display and location selection.
-* **Asynchronous Programming:**
-    * **Kotlin Coroutines:** Background thread management.
-    * **Kotlin Flow (`StateFlow`, `Channel`):** Reactive data streams and event handling. Offline-first approach for observing database changes.
-* **Dependency Injection:**
-    * **Koin:** Managing dependencies across layers.
-* **Data Persistence:**
-    * **Room Persistence Library:** Local SQLite database storage with migrations.
-    * **Indices:** Database index on `isDone` column for query optimization.
-* **Location & Background:**
-    * **Google Play Services - Location:** **Geofencing API** for efficient background location monitoring.
-    * **BroadcastReceiver:** Receiving geofence events when the app is inactive.
-* **Notifications:**
-    * **`NotificationManagerCompat` & Notification Channels:** Creating system notifications.
-* **Code Quality:**
-    * **Detekt:** Static code analysis with formatting rules via `detekt.yml`.
-* **Build System:**
-    * **Gradle:** Using **Version Catalogs** (`libs.versions.toml`) for dependency management.
+---
+
+## High-Level Flow
+
+1. **Create memo**
+- Screen: `CreateMemoFragment`
+- User enters title & description and picks a location on the map.
+- `CreateMemoViewModel` validates input and calls `SaveMemoUseCase`.
+
+2. **Persist + register geofence**
+- `SaveMemoUseCase` stores the memo in Room through `MemoRepository`.
+- After saving, a geofence is registered via `GeofenceHelper` with:
+  - radius = 200m
+  - requestId = memo ID
+  - trigger = geofence enter
+
+3. **User arrives at the location**
+- Android fires `GeofenceBroadcastReceiver`.
+- Receiver looks up the memo by ID using `GetMemoByIdUseCase`.
+- `NotificationHelper` shows a high-priority notification with the memo content.
+
+4. **User taps around the app**
+- `HomeFragment` shows all/open memos in a RecyclerView (`MemoAdapter`).
+- `ViewMemoFragment` displays memo details and (if available) a static map pin.
+
+---
+
+## Architecture
+
+The project is structured in 3 layers:
+
+### Presentation layer (`presentation/`)
+- Fragments (`HomeFragment`, `CreateMemoFragment`, `ViewMemoFragment`)
+- ViewModels (`HomeViewModel`, `CreateMemoViewModel`, `ViewMemoViewModel`)
+- UI state is exposed via `StateFlow`
+- Navigation handled with Android Navigation Component
+- Permissions and user actions are handled in the Fragment, but the logic to decide “what to do next” lives in the ViewModel
+
+### Domain layer (`domain/`)
+- `Memo` data model
+- Use cases:
+  - `SaveMemoUseCase`
+  - `GetAllMemosUseCase`
+  - `GetOpenMemosUseCase`
+  - `GetMemoByIdUseCase`
+  - `UpdateMemoDoneStatusUseCase`
+  - `ValidateMemoUseCase`
+  - `AddGeofenceForMemoUseCase`
+- `MemoRepository` interface (abstraction over data layer)
+
+This layer contains business rules and is UI-agnostic.
+
+### Data layer (`data/`)
+- Room:
+  - `MemoModel`, `MemoDao`, `AppDatabase`
+- Mapping between Room entities and domain (`MemoMapperImpl`)
+- `MemoRepositoryImpl`:
+  - reads/writes memos
+  - registers/removes geofences
+  - returns `Result<T>` for error safety
+- `GeofenceHelper`:
+  - wraps `GeofencingClient`
+  - creates/removes geofences
+- `GeofenceBroadcastReceiver`:
+  - triggered in background
+  - loads memo
+  - posts notification via `NotificationHelper`
+
+`NotificationHelper` also creates the notification channel on app startup.
+
+---
+
+## Permissions
+
+At runtime the app requests:
+
+- **Fine location** (`ACCESS_FINE_LOCATION`)  
+  Needed to pick a point on the map and get current location.
+
+- **Background location** (`ACCESS_BACKGROUND_LOCATION`, on Android 10+)  
+  Needed so the geofence can still trigger while the app is not in the foreground.
+
+- **Notifications** (`POST_NOTIFICATIONS`, on Android 13+)  
+  Needed to actually show the reminder.
+
+`CreateMemoFragment` coordinates these permission flows.  
+If permissions are missing, the user sees rationale dialogs or a Snackbar, and in the “permanently denied” case is guided to system settings.
+
+---
+
+## Building & Running
+
+- The project is written in Kotlin.
+- The codebase was tested with **Android Studio Narwhal Feature Drop**.
+- Please **disable the NDK plugin** if it’s enabled in your environment; the project doesn’t use NDK, and it can cause sync noise.
+- Steps:
+  1. Open the project in Android Studio.
+  2. Let Gradle sync.
+  3. Run on a device or emulator with Google Play Services.
+  4. Grant all requested permissions when prompted.
+
+No additional setup, API keys, or secrets are required.
+
+---
+
+## Testing the Geofence Behavior
+
+To simulate the notification:
+
+1. Create a memo with a chosen location.
+2. Ensure background location + notification permissions are granted.
+3. Move the device (or emulator GPS) to within ~200 meters of that location.
+4. You should get a notification with:
+- the memo title, and
+- the first 140 chars of the memo text.
+
+On an emulator you can do this using the “Location” controls in the Extended Controls panel.
+
+---
+
+Thanks for reviewing the solution 🙌  
+This version is intended to be close to something I'd be comfortable shipping in a real app (permission flows, background behavior, clean layering), not just a quick prototype.

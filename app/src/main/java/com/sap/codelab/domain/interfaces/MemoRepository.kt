@@ -27,6 +27,6 @@ interface MemoRepository {
      */
     suspend fun getMemoById(id: Long): Result<Memo>
 
-    suspend fun addGeofenceForMemo(memo: Memo): Result<Unit>
+    suspend fun addGeofenceForMemo(memo: Memo, radius: Float): Result<Unit>
     suspend fun removeGeofenceForMemo(memoId: Long): Result<Unit>
 }

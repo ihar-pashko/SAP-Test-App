@@ -6,9 +6,6 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +14,7 @@ import com.sap.codelab.databinding.FragmentHomeBinding
 import com.sap.codelab.presentation.base.BaseFragment
 import com.sap.codelab.presentation.create.CreateMemoFragment
 import com.sap.codelab.presentation.home.adapters.MemoAdapter
-import kotlinx.coroutines.launch
+import com.sap.codelab.utils.extensions.collectInLifecycle
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
@@ -42,11 +39,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         setupCustomToolbarActions()
         observeFilterState()
         observeErrorState()
+        observeMemos(memoAdapter)
         viewModel.onShowAllMemosSelected()
     }
 
     private fun initializeAdapter(): MemoAdapter {
-        val adapter = MemoAdapter(
+        return MemoAdapter(
             onMemoClick = { memoId ->
                 val action = HomeFragmentDirections.actionHomeFragmentToViewMemoFragment(memoId)
                 findNavController().navigate(action)
@@ -55,15 +53,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 viewModel.onMemoDoneStatusChanged(memoId, isChecked)
             }
         )
+    }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.memos.collect { uiMemos ->
-                    adapter.submitList(uiMemos)
-                }
-            }
+    private fun observeMemos(adapter: MemoAdapter) {
+        viewModel.memos.collectInLifecycle(this) { uiMemos ->
+            adapter.submitList(uiMemos)
         }
-        return adapter
     }
 
     private fun setupRecyclerView(adapter: MemoAdapter) {
@@ -88,34 +83,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun observeFilterState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.currentFilter.collect { filterType ->
-                    when (filterType) {
-                        MemoFilterType.ALL -> {
-                            binding.actionShowOpen.isVisible = true
-                            binding.actionShowAll.isVisible = false
-                        }
+        viewModel.currentFilter.collectInLifecycle(this) { filterType ->
+            when (filterType) {
+                MemoFilterType.ALL -> {
+                    binding.actionShowOpen.isVisible = true
+                    binding.actionShowAll.isVisible = false
+                }
 
-                        MemoFilterType.OPEN -> {
-                            binding.actionShowAll.isVisible = true
-                            binding.actionShowOpen.isVisible = false
-                        }
-                    }
+                MemoFilterType.OPEN -> {
+                    binding.actionShowAll.isVisible = true
+                    binding.actionShowOpen.isVisible = false
                 }
             }
         }
     }
 
     private fun observeErrorState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.errorState.collect { errorMessage ->
-                    errorMessage?.let { message ->
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                        viewModel.onClearError()
-                    }
-                }
+        viewModel.errorState.collectInLifecycle(this) { errorMessage ->
+            errorMessage?.let { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                viewModel.onClearError()
             }
         }
     }

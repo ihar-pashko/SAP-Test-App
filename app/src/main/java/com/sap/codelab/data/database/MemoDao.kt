@@ -34,5 +34,5 @@ internal interface MemoDao {
      * @return the memo whose id matches the given id.
      */
     @Query("SELECT * FROM memo WHERE id = :memoId")
-    suspend fun getMemoById(memoId: Long): MemoModel
+    suspend fun getMemoById(memoId: Long): MemoModel?
 }

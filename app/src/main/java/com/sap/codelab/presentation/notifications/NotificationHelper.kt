@@ -30,7 +30,7 @@ class NotificationHelper(private val context: Context) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification_icon)
             .setContentTitle(memo.title)
-            .setContentText(memo.description.take(140))
+            .setContentText(memo.description.take(NUMBER_OF_CHARACTERS))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
 
@@ -46,5 +46,6 @@ class NotificationHelper(private val context: Context) {
         private const val CHANNEL_ID = "memo_location_channel"
         private const val CHANNEL_NAME = "Location Reminders"
         private const val CHANNEL_DESCRIPTION = "Notifications for location-based memos"
+        private const val NUMBER_OF_CHARACTERS = 140
     }
 }

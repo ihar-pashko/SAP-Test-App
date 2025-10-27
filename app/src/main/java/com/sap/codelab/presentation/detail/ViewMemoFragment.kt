@@ -21,6 +21,7 @@ import com.sap.codelab.R
 import com.sap.codelab.databinding.FragmentViewMemoBinding
 import com.sap.codelab.presentation.base.BaseFragment
 import com.sap.codelab.presentation.model.MemoUI
+import com.sap.codelab.utils.extensions.collectInLifecycle
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -65,21 +66,14 @@ class ViewMemoFragment :
     }
 
     private fun observeViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.memoUiModel.collect { memoUi ->
-                        updateTextUI(memoUi)
-                    }
-                }
-                launch {
-                    viewModel.errorState.collect { errorMessage ->
-                        errorMessage?.let {
-                            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                            viewModel.onClearError()
-                        }
-                    }
-                }
+        viewModel.memoUiModel.collectInLifecycle(this) { memoUi ->
+            updateTextUI(memoUi)
+        }
+
+        viewModel.errorState.collectInLifecycle(this) { errorMessage ->
+            errorMessage?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                viewModel.onClearError()
             }
         }
     }

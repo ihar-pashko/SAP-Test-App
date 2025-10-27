@@ -15,5 +15,7 @@
     <string name="location_permission_rationale">Permission is needed to select a point on the map.</string>
     <string name="background_location_permission_rationale">Background permission is needed for reminders to trigger when the app is inactive.</string>
     <string name="reminder_location_marker_title">Reminder location</string>
+    <string name="failed_to_get_data_for_geofence">Failed to get data for geofence.</string>
+    <string name="place_of_reminder">Place of reminder</string>
 
 </resources>

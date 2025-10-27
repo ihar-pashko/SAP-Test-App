@@ -1,4 +1,4 @@
-package com.sap.codelab.services
+package com.sap.codelab.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

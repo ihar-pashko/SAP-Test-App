@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 /**
  * ViewModel for matching ViewMemo view.
@@ -35,21 +36,20 @@ internal class ViewMemoViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     private val memoDomainFlow: StateFlow<Memo?> = _memoId
         .filterNotNull()
-        // UseCase возвращает Result<Memo>
         .mapLatest { id -> getMemoByIdUseCase(id) }
         .map { result ->
             result.fold(
                 onSuccess = { memo -> memo },
                 onFailure = { error ->
                     Log.e("ViewMemoViewModel", "Error loading memo ${_memoId.value}", error)
-                    _errorState.value = "Не удалось загрузить заметку."
+                    _errorState.update { error.message }
                     null
                 }
             )
         }
         .catch { e ->
             Log.e("ViewMemoViewModel", "Exception in memoDomainFlow for ${_memoId.value}", e)
-            _errorState.value = "Произошла ошибка при загрузке."
+            _errorState.update { e.message }
             emit(null)
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
@@ -75,6 +75,6 @@ internal class ViewMemoViewModel(
     }
 
     fun onClearError() {
-        _errorState.value = null
+        _errorState.update { null }
     }
 }

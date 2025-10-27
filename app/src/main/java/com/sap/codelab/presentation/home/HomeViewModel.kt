@@ -98,7 +98,7 @@ internal class HomeViewModel(
         }
     }
 
-    fun clearError() {
+    fun onClearError() {
         _errorState.update { null }
     }
 }

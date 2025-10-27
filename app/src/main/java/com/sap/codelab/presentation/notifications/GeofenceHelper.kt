@@ -12,7 +12,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
-import com.sap.codelab.services.GeofenceBroadcastReceiver
+import com.sap.codelab.receiver.GeofenceBroadcastReceiver
 
 class GeofenceHelper(private val context: Context) {
 

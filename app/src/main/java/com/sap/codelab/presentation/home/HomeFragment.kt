@@ -113,7 +113,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 viewModel.errorState.collect { errorMessage ->
                     errorMessage?.let { message ->
                         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                        viewModel.clearError()
+                        viewModel.onClearError()
                     }
                 }
             }

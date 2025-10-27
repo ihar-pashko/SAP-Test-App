@@ -2,8 +2,8 @@ package com.sap.codelab.di
 
 import com.sap.codelab.data.mapper.MemoMapper
 import com.sap.codelab.data.mapper.MemoMapperImpl
-import com.sap.codelab.presentation.MemoUIMapper
-import com.sap.codelab.presentation.MemoUIMapperImpl
+import com.sap.codelab.presentation.mapper.MemoUIMapper
+import com.sap.codelab.presentation.mapper.MemoUIMapperImpl
 import org.koin.dsl.module
 
 val domainMapperModule = module {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +36,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
 
         setFragmentResultListener(CreateMemoFragment.REQUEST_KEY_MEMO_CREATED) { _, _ ->
-            viewModel.refreshMemos()
+            viewModel.onRefreshMemos()
         }
 
         setupCustomToolbarActions()
@@ -92,13 +93,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 viewModel.currentFilter.collect { filterType ->
                     when (filterType) {
                         MemoFilterType.ALL -> {
-                            binding.actionShowOpen.visibility = View.VISIBLE
-                            binding.actionShowAll.visibility = View.GONE
+                            binding.actionShowOpen.isVisible = true
+                            binding.actionShowAll.isVisible = false
                         }
 
                         MemoFilterType.OPEN -> {
-                            binding.actionShowAll.visibility = View.VISIBLE
-                            binding.actionShowOpen.visibility = View.GONE
+                            binding.actionShowAll.isVisible = true
+                            binding.actionShowOpen.isVisible = false
                         }
                     }
                 }

@@ -7,7 +7,7 @@ import com.sap.codelab.domain.usecases.GetAllMemosUseCase
 import com.sap.codelab.domain.usecases.GetMemoByIdUseCase
 import com.sap.codelab.domain.usecases.GetOpenMemosUseCase
 import com.sap.codelab.domain.usecases.UpdateMemoDoneStatusUseCase
-import com.sap.codelab.presentation.MemoUIMapper
+import com.sap.codelab.presentation.mapper.MemoUIMapper
 import com.sap.codelab.presentation.model.MemoUI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +33,7 @@ internal class HomeViewModel(
 
     private val _currentFilter = MutableStateFlow(MemoFilterType.OPEN)
     val currentFilter: StateFlow<MemoFilterType> = _currentFilter.asStateFlow()
+
     private val _memos: MutableStateFlow<List<MemoUI>> = MutableStateFlow(listOf())
     val memos: StateFlow<List<MemoUI>> = _memos.asStateFlow()
 
@@ -43,23 +44,17 @@ internal class HomeViewModel(
         loadMemos()
     }
 
-    /**
-     * Loads all memos.
-     */
     fun onShowAllMemosSelected() {
         _currentFilter.update { MemoFilterType.ALL }
         loadMemos()
     }
 
-    /**
-     * Loads all open (not done) memos.
-     */
     fun onShowOpenMemosSelected() {
         _currentFilter.update { MemoFilterType.OPEN }
         loadMemos()
     }
 
-    fun refreshMemos() {
+    fun onRefreshMemos() {
         loadMemos()
     }
 
@@ -74,12 +69,12 @@ internal class HomeViewModel(
                             }
                             .onFailure { updateError ->
                                 Log.e("HomeViewModel", "Error updating memo status", updateError)
-                                _errorState.value = "Cound not update memo status."
+                                _errorState.update { "Could not update memo status." }
                             }
                     }
                     .onFailure { getError ->
                         Log.e("HomeViewModel", "Error getting memo by ID for update", getError)
-                        _errorState.value = "Cound not load memo for update."
+                        _errorState.update { "Could not load memo for update." }
                     }
             }
         }
@@ -94,10 +89,10 @@ internal class HomeViewModel(
 
             result.onSuccess { domainMemos ->
                 _memos.value = memoUIMapper.fromDomainListToUI(domainMemos)
-                _errorState.value = null
+                _errorState.update { null }
             }.onFailure { error ->
                 Log.e("HomeViewModel", "Error loading memos", error)
-                _errorState.value = "List of memos could not be loaded."
+                _errorState.update { "List of memos could not be loaded." }
                 _memos.value = emptyList()
             }
         }

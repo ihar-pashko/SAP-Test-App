@@ -5,6 +5,7 @@ import com.sap.codelab.data.database.MemoDao
 import com.sap.codelab.data.mapper.MemoMapper
 import com.sap.codelab.domain.interfaces.MemoRepository
 import com.sap.codelab.domain.model.Memo
+import com.sap.codelab.presentation.notifications.GeofenceHelper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
@@ -14,7 +15,8 @@ import kotlinx.coroutines.withContext
 internal class MemoRepositoryImpl(
     private val memoDao: MemoDao,
     private val mapper: MemoMapper,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val geofenceHelper: GeofenceHelper
 ) : MemoRepository {
 
     override suspend fun saveMemo(memo: Memo): Result<Long> = withContext(ioDispatcher) {
@@ -57,5 +59,46 @@ internal class MemoRepositoryImpl(
             Log.e("MemoRepository", "Error getting memo by ID: $id", e)
             Result.failure(e)
         }
+    }
+
+    override suspend fun addGeofenceForMemo(memo: Memo): Result<Unit> = withContext(ioDispatcher) {
+        if (memo.id > 0 && memo.reminderLatitude != null && memo.reminderLongitude != null) {
+            try {
+                geofenceHelper.addGeofence(
+                    id = memo.id.toString(),
+                    latitude = memo.reminderLatitude,
+                    longitude = memo.reminderLongitude,
+                    radius = RADIUS
+                )
+                Result.success(Unit)
+            } catch (e: SecurityException) {
+                Log.e("MemoRepository", "Missing location permissions for adding geofence ${memo.id}", e)
+                Result.failure(e)
+            } catch (e: Exception) {
+                Log.e("MemoRepository", "Error adding geofence for memo ${memo.id}", e)
+                Result.failure(e)
+            }
+        } else {
+            Log.d("MemoRepository", "Skipping geofence add for memo ${memo.id} - no location or invalid ID")
+            Result.success(Unit)
+        }
+    }
+
+    override suspend fun removeGeofenceForMemo(memoId: Long): Result<Unit> = withContext(ioDispatcher) {
+        if (memoId > 0) {
+            try {
+                geofenceHelper.removeGeofence(memoId.toString())
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Log.w("MemoRepository", "Error removing geofence for memo $memoId", e)
+                Result.failure(e)
+            }
+        } else {
+            Result.success(Unit)
+        }
+    }
+
+    companion object {
+        private const val RADIUS = 200f
     }
 }

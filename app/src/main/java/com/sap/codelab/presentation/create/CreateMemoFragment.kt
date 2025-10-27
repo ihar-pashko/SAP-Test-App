@@ -84,6 +84,17 @@ class CreateMemoFragment :
             }
         }
 
+    private val requestNotificationsPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (!isGranted) {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.notifications_permission_denied,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
     override val toolbar: Toolbar
         get() = binding.toolbar
 
@@ -120,9 +131,12 @@ class CreateMemoFragment :
         viewModel.events.collectInLifecycle(this) { event ->
             when (event) {
                 is CreateMemoEvent.NavigateBackWithSuccess -> {
-                    addGeofenceAfterSave(event.memoId)
-                    setFragmentResult(REQUEST_KEY_MEMO_CREATED, bundleOf())
-                    findNavController().popBackStack()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        addGeofenceAfterSave(event.memoId)
+                        requestPostNotificationsPermissionIfNeeded()
+                        setFragmentResult(REQUEST_KEY_MEMO_CREATED, bundleOf())
+                        findNavController().popBackStack()
+                    }
                 }
 
                 is CreateMemoEvent.ShowError -> {
@@ -151,62 +165,61 @@ class CreateMemoFragment :
         }
     }
 
-    private fun addGeofenceAfterSave(memoId: Long) {
+    private suspend fun addGeofenceAfterSave(memoId: Long) {
         val location = viewModel.selectedLocation.value
         if (location != null && memoId > 0) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                getMemoByIdUseCase(memoId)
-                    .onSuccess { savedMemo ->
-                        if (checkBackgroundLocationPermission()) {
-                            addGeofenceUseCase(savedMemo)
-                                .onFailure { error ->
-                                    Log.w(
-                                        "CreateMemoFragment",
-                                        "Failed to add geofence via UseCase",
-                                        error
-                                    )
-                                }
-                        } else {
-                            pendingMemoForGeofence = savedMemo
-                            requestBackgroundLocationPermission()
-                        }
+            getMemoByIdUseCase(memoId)
+                .onSuccess { savedMemo ->
+                    if (checkBackgroundLocationPermission()) {
+                        addGeofenceUseCase(savedMemo)
+                            .onFailure { error ->
+                                Log.w(
+                                    "CreateMemoFragment",
+                                    "Failed to add geofence via UseCase",
+                                    error
+                                )
+                            }
+                    } else {
+                        pendingMemoForGeofence = savedMemo
+                        requestBackgroundLocationPermission()
                     }
-                    .onFailure { getError ->
-                        Log.e(
-                            "CreateMemoFragment",
-                            "Failed to get saved memo $memoId for geofence",
-                            getError
-                        )
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.failed_to_get_data_for_geofence,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-            }
+                }
+                .onFailure { getError ->
+                    Log.e(
+                        "CreateMemoFragment",
+                        "Failed to get saved memo $memoId for geofence",
+                        getError
+                    )
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.failed_to_get_data_for_geofence,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
         }
     }
 
-    private fun addPendingGeofence() {
+    private suspend fun addPendingGeofence() {
         pendingMemoForGeofence?.let { memo ->
-            viewLifecycleOwner.lifecycleScope.launch {
-                addGeofenceUseCase(memo)
-                    .onFailure { error ->
-                        Log.w(
-                            "CreateMemoFragment",
-                            "Failed to add PENDING geofence via UseCase",
-                            error
-                        )
-                    }
-                pendingMemoForGeofence = null
-            }
+            addGeofenceUseCase(memo)
+                .onFailure { error ->
+                    Log.w(
+                        "CreateMemoFragment",
+                        "Failed to add PENDING geofence via UseCase",
+                        error
+                    )
+                }
+            pendingMemoForGeofence = null
+            requestPostNotificationsPermissionIfNeeded()
         }
     }
 
     private val requestBackgroundLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                addPendingGeofence()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    addPendingGeofence()
+                }
             } else {
                 Toast.makeText(
                     requireContext(),
@@ -214,6 +227,7 @@ class CreateMemoFragment :
                     Toast.LENGTH_LONG
                 ).show()
                 pendingMemoForGeofence = null
+                requestPostNotificationsPermissionIfNeeded()
             }
         }
 
@@ -267,7 +281,9 @@ class CreateMemoFragment :
     private fun addOrMoveMarker(latLng: LatLng) {
         currentMarker?.remove()
         currentMarker =
-            googleMap?.addMarker(MarkerOptions().position(latLng).title(getString(R.string.place_of_reminder)))
+            googleMap?.addMarker(
+                MarkerOptions().position(latLng).title(getString(R.string.place_of_reminder))
+            )
         googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         binding.contentCreateMemo.clearLocationButton.isVisible = true
     }
@@ -361,6 +377,25 @@ class CreateMemoFragment :
                     }
                 }
             }
+        }
+    }
+
+    private fun hasPostNotificationsPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+    }
+
+    private fun requestPostNotificationsPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !hasPostNotificationsPermission()
+        ) {
+            requestNotificationsPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 

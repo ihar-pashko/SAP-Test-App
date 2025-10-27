@@ -17,5 +17,6 @@
     <string name="reminder_location_marker_title">Reminder location</string>
     <string name="failed_to_get_data_for_geofence">Failed to get data for geofence.</string>
     <string name="place_of_reminder">Place of reminder</string>
+    <string name="notifications_permission_denied">Notifications permissions denied</string>
 
 </resources>

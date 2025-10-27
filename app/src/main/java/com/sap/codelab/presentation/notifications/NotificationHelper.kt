@@ -1,11 +1,15 @@
 package com.sap.codelab.presentation.notifications
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.sap.codelab.R
 import com.sap.codelab.domain.model.Memo
 
@@ -25,6 +29,21 @@ class NotificationHelper(private val context: Context) {
     }
 
     fun showMemoNotification(memo: Memo) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val hasPermission = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!hasPermission) {
+                Log.w(
+                    "NotificationHelper",
+                    "Skipping notify for memo ${memo.id}: no POST_NOTIFICATIONS permission"
+                )
+                return
+            }
+        }
+
         val notificationId = memo.id.toInt()
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -34,12 +53,8 @@ class NotificationHelper(private val context: Context) {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
 
-        try {
-            notificationManager.notify(notificationId, builder.build())
-            Log.i("NotificationHelper", "Notification shown for memo ID: ${memo.id}")
-        } catch (e: SecurityException) {
-            Log.e("NotificationHelper", "Missing POST_NOTIFICATIONS permission?", e)
-        }
+        notificationManager.notify(notificationId, builder.build())
+        Log.i("NotificationHelper", "Notification shown for memo ID: ${memo.id}")
     }
 
     companion object {

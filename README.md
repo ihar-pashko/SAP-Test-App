@@ -146,3 +146,5 @@ On an emulator you can do this using the “Location” controls in the Extended
 
 Thanks for reviewing the solution 🙌  
 This version is intended to be close to something I'd be comfortable shipping in a real app (permission flows, background behavior, clean layering), not just a quick prototype.
+
+See a demonstration of the app in action: [SAP-Test-App-Demo](./app/src/main/assets/SAP-Test-App-Demo.gif)

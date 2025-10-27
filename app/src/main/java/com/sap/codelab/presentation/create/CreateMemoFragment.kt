@@ -179,7 +179,7 @@ class CreateMemoFragment :
                         )
                         Toast.makeText(
                             requireContext(),
-                            "Failed to get data for geofence.",
+                            R.string.failed_to_get_data_for_geofence,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -267,7 +267,7 @@ class CreateMemoFragment :
     private fun addOrMoveMarker(latLng: LatLng) {
         currentMarker?.remove()
         currentMarker =
-            googleMap?.addMarker(MarkerOptions().position(latLng).title("Place of reminder"))
+            googleMap?.addMarker(MarkerOptions().position(latLng).title(getString(R.string.place_of_reminder)))
         googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         binding.contentCreateMemo.clearLocationButton.isVisible = true
     }

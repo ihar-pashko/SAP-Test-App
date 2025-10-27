@@ -23,8 +23,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -38,7 +36,7 @@ import com.sap.codelab.R
 import com.sap.codelab.databinding.FragmentCreateMemoBinding
 import com.sap.codelab.presentation.base.BaseFragment
 import com.sap.codelab.presentation.notifications.GeofenceHelper
-import kotlinx.coroutines.launch
+import com.sap.codelab.utils.extensions.collectInLifecycle
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CreateMemoFragment :
@@ -112,43 +110,34 @@ class CreateMemoFragment :
     }
 
     private fun observeViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.validationState.collect { state ->
-                        binding.contentCreateMemo.memoTitleContainer.error =
-                            getErrorMessage(state.hasTitleError, R.string.memo_title_empty_error)
-                        binding.contentCreateMemo.memoDescription.error =
-                            getErrorMessage(
-                                state.hasDescriptionError,
-                                R.string.memo_text_empty_error
-                            )
-                    }
+        viewModel.validationState.collectInLifecycle(this) { state ->
+            binding.contentCreateMemo.memoTitleContainer.error = getErrorMessage(
+                hasError = state.hasTitleError,
+                errorMessageResId = R.string.memo_title_empty_error
+            )
+
+            binding.contentCreateMemo.memoDescription.error = getErrorMessage(
+                hasError = state.hasDescriptionError,
+                errorMessageResId = R.string.memo_text_empty_error
+            )
+        }
+
+        viewModel.events.collectInLifecycle(this) { event ->
+            when (event) {
+                is CreateMemoEvent.NavigateBackWithSuccess -> {
+                    tryRegisterGeofence(event.memoId)
+                    setFragmentResult(REQUEST_KEY_MEMO_CREATED, bundleOf())
+                    findNavController().popBackStack()
                 }
 
-                launch {
-                    viewModel.events.collect { event ->
-                        when (event) {
-                            is CreateMemoEvent.NavigateBackWithSuccess -> {
-                                tryRegisterGeofence(event.memoId)
-                                setFragmentResult(REQUEST_KEY_MEMO_CREATED, bundleOf())
-                                findNavController().popBackStack()
-                            }
-
-                            is CreateMemoEvent.ShowError -> {
-                                Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT)
-                                    .show()
-                            }
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.selectedLocation.collect { location ->
-                        binding.contentCreateMemo.clearLocationButton.isVisible = location != null
-                    }
+                is CreateMemoEvent.ShowError -> {
+                    Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+
+        viewModel.selectedLocation.collectInLifecycle(this) { location ->
+            binding.contentCreateMemo.clearLocationButton.isVisible = location != null
         }
     }
 

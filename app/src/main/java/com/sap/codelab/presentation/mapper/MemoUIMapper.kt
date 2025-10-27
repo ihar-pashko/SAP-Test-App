@@ -1,4 +1,4 @@
-package com.sap.codelab.presentation
+package com.sap.codelab.presentation.mapper
 
 import com.sap.codelab.domain.model.Memo
 import com.sap.codelab.presentation.model.MemoUI

@@ -8,18 +8,21 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 import com.sap.codelab.domain.usecases.GetMemoByIdUseCase
 import com.sap.codelab.presentation.notifications.NotificationHelper
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.qualifier.named
 
-class GeofenceBroadcastReceiver : BroadcastReceiver(), KoinComponent {
+class GeofenceBroadcastReceiver() : BroadcastReceiver(), KoinComponent {
     private val getMemoByIdUseCase: GetMemoByIdUseCase by inject()
     private val notificationHelper: NotificationHelper by inject()
 
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val ioDispatcher: CoroutineDispatcher by inject(
+        qualifier = named(Dispatchers.IO::class.simpleName.orEmpty())
+    )
 
     override fun onReceive(context: Context, intent: Intent) {
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
@@ -40,7 +43,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver(), KoinComponent {
                 if (memoId != null) {
                     Log.d("GeofenceReceiver", "Processing geofence for memo ID: $memoId")
                     val pendingResult = goAsync()
-                    scope.launch {
+                    CoroutineScope(ioDispatcher).launch {
                         try {
                             getMemoByIdUseCase(memoId)
                                 .onSuccess { memo ->
@@ -48,7 +51,11 @@ class GeofenceBroadcastReceiver : BroadcastReceiver(), KoinComponent {
                                     notificationHelper.showMemoNotification(memo)
                                 }
                                 .onFailure { error ->
-                                    Log.e("GeofenceReceiver", "Error getting memo for notification ID: $memoId", error)
+                                    Log.e(
+                                        "GeofenceReceiver",
+                                        "Error getting memo for notification ID: $memoId",
+                                        error
+                                    )
                                 }
                         } finally {
                             pendingResult.finish()
@@ -59,7 +66,10 @@ class GeofenceBroadcastReceiver : BroadcastReceiver(), KoinComponent {
                 }
             }
         } else {
-            Log.d("GeofenceReceiver", "Ignoring geofence transition type: ${geofencingEvent.geofenceTransition}")
+            Log.d(
+                "GeofenceReceiver",
+                "Ignoring geofence transition type: ${geofencingEvent.geofenceTransition}"
+            )
         }
     }
 }

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.sap.codelab.domain.model.Memo
 import com.sap.codelab.domain.usecases.GetMemoByIdUseCase
-import com.sap.codelab.presentation.MemoUIMapper
+import com.sap.codelab.presentation.mapper.MemoUIMapper
 import com.sap.codelab.presentation.model.MemoUI
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -20,12 +20,10 @@ data class MemoModel(
     var title: String,
     @ColumnInfo(name = "description")
     var description: String,
-    @ColumnInfo(name = "reminderDate")
-    var reminderDate: Long,
     @ColumnInfo(name = "reminderLatitude")
-    var reminderLatitude: Long,
+    var reminderLatitude: Double? = null,
     @ColumnInfo(name = "reminderLongitude")
-    var reminderLongitude: Long,
+    var reminderLongitude: Double? = null,
     @ColumnInfo(name = "isDone")
     var isDone: Boolean = false
 )

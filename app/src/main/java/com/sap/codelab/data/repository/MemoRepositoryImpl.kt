@@ -17,11 +17,11 @@ internal class MemoRepositoryImpl(
     private val ioDispatcher: CoroutineDispatcher
 ) : MemoRepository {
 
-    override suspend fun saveMemo(memo: Memo): Result<Unit> = withContext(ioDispatcher) {
+    override suspend fun saveMemo(memo: Memo): Result<Long> = withContext(ioDispatcher) {
         try {
             val memoModel = mapper.fromUIToModel(memo)
-            memoDao.insert(memoModel)
-            Result.success(Unit)
+            val insertedId = memoDao.insert(memoModel)
+            Result.success(insertedId)
         } catch (e: Exception) {
             Log.e("MemoRepository", "Error saving memo", e)
             Result.failure(e)

@@ -2,6 +2,7 @@ package com.sap.codelab.presentation.create
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
 import com.sap.codelab.domain.usecases.SaveMemoUseCase
 import com.sap.codelab.domain.usecases.ValidateMemoUseCase
 import com.sap.codelab.utils.extensions.empty
@@ -25,6 +26,10 @@ internal class CreateMemoViewModel(
 
     private val _description = MutableStateFlow(String.Companion.empty)
     val description = _description.asStateFlow()
+
+    private val _selectedLocation = MutableStateFlow<LatLng?>(null)
+    val selectedLocation = _selectedLocation.asStateFlow()
+
     private val _validationState = MutableStateFlow(CreateMemoValidationState())
     val validationState = _validationState.asStateFlow()
 
@@ -42,11 +47,18 @@ internal class CreateMemoViewModel(
 
         if (currentValidationResult.isValid) {
             viewModelScope.launch {
-                saveMemoUseCase(
+                val result = saveMemoUseCase(
                     title = _title.value,
-                    description = _description.value
+                    description = _description.value,
+                    latitude = _selectedLocation.value?.latitude,
+                    longitude = _selectedLocation.value?.longitude
                 )
-                _eventChannel.send(CreateMemoEvent.NavigateBack)
+
+                result.onSuccess { savedMemoId ->
+                    _eventChannel.send(CreateMemoEvent.NavigateBackWithSuccess(savedMemoId))
+                }.onFailure { error ->
+                    _eventChannel.send(CreateMemoEvent.ShowError("Unable to save memo: $error"))
+                }
             }
         }
     }
@@ -64,6 +76,10 @@ internal class CreateMemoViewModel(
         if (needsValidationReset) {
             _validationState.update { CreateMemoValidationState() }
         }
+    }
+
+    fun setSelectedLocation(location: LatLng?) {
+        _selectedLocation.value = location
     }
 
     private fun validateInternal(): ValidateMemoUseCase.MemoValidationResult =

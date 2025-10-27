@@ -4,10 +4,13 @@ import android.app.Application
 import com.sap.codelab.di.databaseModule
 import com.sap.codelab.di.dispatcherModule
 import com.sap.codelab.di.domainMapperModule
+import com.sap.codelab.di.notificationModule
+import com.sap.codelab.di.receiverModule
 import com.sap.codelab.di.repositoryModule
 import com.sap.codelab.di.uiMapperModule
 import com.sap.codelab.di.useCaseModule
 import com.sap.codelab.di.viewModelModule
+import com.sap.codelab.presentation.notifications.NotificationHelper
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -27,9 +30,13 @@ internal class App : Application() {
                     domainMapperModule,
                     useCaseModule,
                     dispatcherModule,
-                    uiMapperModule
+                    uiMapperModule,
+                    notificationModule,
+                    receiverModule
                 )
             )
+
+            koin.get<NotificationHelper>().createNotificationChannel()
         }
     }
 }

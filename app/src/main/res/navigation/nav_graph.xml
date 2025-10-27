@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/viewMemoFragment"
-        android:name="com.sap.codelab.presentation.view.ViewMemoFragment"
+        android:name="com.sap.codelab.presentation.detail.ViewMemoFragment"
         android:label="View Memo"
         tools:layout="@layout/fragment_view_memo">
 

@@ -8,6 +8,15 @@ plugins {
     alias(libs.plugins.detekt)
 }
 
+def getApiKey() {
+    Properties properties = new Properties()
+    def localPropertiesFile = project.rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        properties.load(localPropertiesFile.newDataInputStream())
+    }
+    return properties.getProperty("MAPS_API_KEY", "")
+}
+
 android {
     namespace = "com.sap.codelab"
     compileSdk = Integer.parseInt(libs.versions.compileSdk.get())
@@ -19,6 +28,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [ MAPS_API_KEY:"${getApiKey()}" ]
     }
 
     buildTypes {

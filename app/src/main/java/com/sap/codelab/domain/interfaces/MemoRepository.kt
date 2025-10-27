@@ -10,7 +10,7 @@ interface MemoRepository {
     /**
      * Saves the given memo to the database.
      */
-    suspend fun saveMemo(memo: Memo): Result<Unit>
+    suspend fun saveMemo(memo: Memo): Result<Long>
 
     /**
      * @return all memos currently in the database.

@@ -6,7 +6,6 @@ import com.sap.codelab.di.dispatcherModule
 import com.sap.codelab.di.domainMapperModule
 import com.sap.codelab.di.helperModule
 import com.sap.codelab.di.notificationModule
-import com.sap.codelab.di.receiverModule
 import com.sap.codelab.di.repositoryModule
 import com.sap.codelab.di.uiMapperModule
 import com.sap.codelab.di.useCaseModule
@@ -33,8 +32,7 @@ internal class App : Application() {
                     dispatcherModule,
                     uiMapperModule,
                     notificationModule,
-                    receiverModule,
-                    helperModule
+                    helperModule,
                 )
             )
 

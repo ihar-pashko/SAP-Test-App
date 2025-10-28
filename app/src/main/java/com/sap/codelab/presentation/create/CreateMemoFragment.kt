@@ -35,7 +35,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.sap.codelab.R
 import com.sap.codelab.databinding.FragmentCreateMemoBinding
-import com.sap.codelab.domain.model.Memo
 import com.sap.codelab.domain.usecases.AddGeofenceForMemoUseCase
 import com.sap.codelab.domain.usecases.GetMemoByIdUseCase
 import com.sap.codelab.presentation.base.BaseFragment
@@ -51,8 +50,6 @@ class CreateMemoFragment :
     private val viewModel: CreateMemoViewModel by viewModel()
     private var googleMap: GoogleMap? = null
     private var currentMarker: Marker? = null
-
-    private var pendingMemoForGeofence: Memo? = null
 
     private val addGeofenceUseCase: AddGeofenceForMemoUseCase by inject()
     private val getMemoByIdUseCase: GetMemoByIdUseCase by inject()
@@ -92,6 +89,23 @@ class CreateMemoFragment :
                     R.string.notifications_permission_denied,
                     Toast.LENGTH_LONG
                 ).show()
+            }
+        }
+
+    private val requestBackgroundLocationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    addPendingGeofence()
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.background_location_permission_denied,
+                    Toast.LENGTH_LONG
+                ).show()
+                viewModel.onClearPendingMemo()
+                requestPostNotificationsPermissionIfNeeded()
             }
         }
 
@@ -180,7 +194,7 @@ class CreateMemoFragment :
                                 )
                             }
                     } else {
-                        pendingMemoForGeofence = savedMemo
+                        viewModel.setPendingMemoForGeofence(savedMemo)
                         requestBackgroundLocationPermission()
                     }
                 }
@@ -200,7 +214,7 @@ class CreateMemoFragment :
     }
 
     private suspend fun addPendingGeofence() {
-        pendingMemoForGeofence?.let { memo ->
+        viewModel.getPendingMemo()?.let { memo ->
             addGeofenceUseCase(memo)
                 .onFailure { error ->
                     Log.w(
@@ -209,27 +223,10 @@ class CreateMemoFragment :
                         error
                     )
                 }
-            pendingMemoForGeofence = null
+            viewModel.onClearPendingMemo()
             requestPostNotificationsPermissionIfNeeded()
         }
     }
-
-    private val requestBackgroundLocationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    addPendingGeofence()
-                }
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.background_location_permission_denied,
-                    Toast.LENGTH_LONG
-                ).show()
-                pendingMemoForGeofence = null
-                requestPostNotificationsPermissionIfNeeded()
-            }
-        }
 
     private fun setupMenu() {
         requireActivity().addMenuProvider(

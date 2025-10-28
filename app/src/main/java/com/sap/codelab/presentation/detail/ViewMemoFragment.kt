@@ -1,9 +1,11 @@
 package com.sap.codelab.presentation.detail
 
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -57,10 +59,12 @@ class ViewMemoFragment :
         }
     }
 
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap?.uiSettings?.setAllGesturesEnabled(false)
-        googleMap?.uiSettings?.isMapToolbarEnabled = false
+        googleMap?.uiSettings?.isZoomControlsEnabled = true
+        googleMap?.uiSettings?.isMyLocationButtonEnabled = true
+        googleMap?.isMyLocationEnabled = true
 
         observeLocation()
     }

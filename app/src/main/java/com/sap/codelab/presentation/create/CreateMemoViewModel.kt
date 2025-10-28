@@ -3,6 +3,7 @@ package com.sap.codelab.presentation.create
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.sap.codelab.domain.model.Memo
 import com.sap.codelab.domain.usecases.SaveMemoUseCase
 import com.sap.codelab.domain.usecases.ValidateMemoUseCase
 import com.sap.codelab.utils.extensions.empty
@@ -35,6 +36,8 @@ internal class CreateMemoViewModel(
 
     private val _eventChannel = Channel<CreateMemoEvent>()
     val events = _eventChannel.receiveAsFlow()
+
+    private val _pendingMemoForGeofence = MutableStateFlow<Memo?>(null)
 
     fun onActionSaveClicked() {
         val currentValidationResult = validateInternal()
@@ -80,6 +83,18 @@ internal class CreateMemoViewModel(
 
     fun setSelectedLocation(location: LatLng?) {
         _selectedLocation.value = location
+    }
+
+    fun setPendingMemoForGeofence(memo: Memo?) {
+        _pendingMemoForGeofence.value = memo
+    }
+
+    fun getPendingMemo(): Memo? {
+        return _pendingMemoForGeofence.value
+    }
+
+    fun onClearPendingMemo() {
+        _pendingMemoForGeofence.value = null
     }
 
     private fun validateInternal(): ValidateMemoUseCase.MemoValidationResult =

@@ -36,15 +36,15 @@ The goal: let the user create a memo with a location, and automatically show a n
 
 2. **Persist + register geofence**
 - `SaveMemoUseCase` stores the memo in Room through `MemoRepository`.
-- After saving, a geofence is registered via `GeofenceHelper` with:
+- After saving, a geofence is registered via `AddGeofenceForMemoUseCase` with:
   - radius = 200m
   - requestId = memo ID
-  - trigger = geofence enter
+  If background location permission isn’t yet granted, the app requests it before adding the geofence.
 
 3. **User arrives at the location**
 - Android fires `GeofenceBroadcastReceiver`.
-- Receiver looks up the memo by ID using `GetMemoByIdUseCase`.
-- `NotificationHelper` shows a high-priority notification with the memo content.
+- Receiver looks up the memo by ID using `GetMemoByIdUseCase` and shows a notification with:
+the memo title, and the first 140 characters of the description.
 
 4. **User taps around the app**
 - `HomeFragment` shows all/open memos in a RecyclerView (`MemoAdapter`).
@@ -85,14 +85,10 @@ This layer contains business rules and is UI-agnostic.
   - reads/writes memos
   - registers/removes geofences
   - returns `Result<T>` for error safety
-- `GeofenceHelper`:
-  - wraps `GeofencingClient`
-  - creates/removes geofences
+- `GeofenceHelper` encapsulates all geofence logic
 - `GeofenceBroadcastReceiver`:
   - triggered in background
-  - loads memo
   - posts notification via `NotificationHelper`
-
 `NotificationHelper` also creates the notification channel on app startup.
 
 ---

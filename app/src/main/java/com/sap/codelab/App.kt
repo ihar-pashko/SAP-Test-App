@@ -32,7 +32,7 @@ internal class App : Application() {
                     dispatcherModule,
                     uiMapperModule,
                     notificationModule,
-                    helperModule
+                    helperModule,
                 )
             )
 
